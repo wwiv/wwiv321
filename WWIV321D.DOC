@@ -3,14 +3,33 @@
                      Copyright (C) 1986 by Wayne Bell
 
 
+===============================================================================
+This doc is for WWIV 3.21d and a few things have been changed I want cover them
+but for the distribution.  This code may be Released with modifications, aslong
+as due credit is giving to Wayne Bell.
+You use this code at your own RISK, No Support of any kind is available.
+This code has been modified by James Fielden to compile and run using Turbo
+Pascal Version 7.0,  It will not compile using Turbo Pascal version 3.0
+
+This BBS could be used as-is and will work ok but I would suggest using it as
+a learing tool or a steping stone to better things.  I spent 3 days Upgrading
+this source to compile using TP Ver 7.0,  so if you like it you can give me
+credit or you can give me some source code to play around with.
+
+Enjoy
+         James E. Fielden
+
+===============================================================================
+
+
 NECESSARY EQUIPMENT:
 ====================
 
-IBM-PC,XT,AT or compatible
-256K or more of memory
-one hard disk (preferably 10 megs or more)
-Turbo Pascal compiler version 3.0
-A Hayes Smartmodem or compatible.
+IBM-PC,XT,AT or compatible                    Ok
+256K or more of memory                        Not Sure
+one hard disk (preferably 10 megs or more)    Ok
+Turbo Pascal compiler version 3.0             Turbo Pascal compiler version 7.0
+A Hayes Smartmodem or compatible.             A modem
 
 
 DISTRIBUTION:
@@ -64,6 +83,7 @@ you have in a different directory.
 If you have any  questions or  problems with  WWIV (or  if you  just want to
 call), you can call the original WWIV at 213-208-6689.
 
+=== Wayne will not support this Version.
 
 INSTALLATION:
 ============
@@ -76,22 +96,22 @@ Also copy  the Turbo  Pascal compiler  into this  directory.  You should now
 have the following files in your BBS directory:
 
 
-BBS.PAS
-COMMON.PAS
-CONVERT.PAS
-DLMENU.MSG
-DLOADS.PAS
-DLP1.PAS
-DLP2.PAS
-DOS.PAS
-DOSMNU.MSG
-DOSP1.PAS
-HELP.MSG
-INIT.PAS
-MAINMENU.MSG
-PART1.PAS
-PART2.PAS
-PART3.PAS
+BBS.PAS                              BBS.PAS
+COMMON.PAS                           COMMON.PAS
+CONVERT.PAS                          DLOADS.PAS
+DLMENU.MSG                           MINIOS.PAS
+DLOADS.PAS                           UNIT0.PAS
+DLP1.PAS                             UNIT1.PAS
+DLP2.PAS                             UNIT2.PAS
+DOS.PAS                              INIT.PAS
+DOSMNU.MSG                           MAINMENU.MSG
+DOSP1.PAS                            MSGMENU.MSG
+HELP.MSG                             WFCMENU.MSG
+INIT.PAS                             SYSOPMNU.MSG
+MAINMENU.MSG                         SECLEV.DAT
+PART1.PAS                            WWIV321D.DOC
+PART2.PAS                            TPC.EXE  or TURBO.EXE
+PART3.PAS                            TURBO.TPL
 PARTX.PAS
 SECLEV.DAT
 SKELETON.PAS
@@ -124,6 +144,8 @@ MDOS
 OHQC            This compiles about 3900 lines of the dos routines.
 Q
 
+
+==== Tpc /m /l init   Tpc /m /l bbs  copy /b bbs.exe + bbs.ovr
 
 
 CUSTOMIZATION: There are a  few files  that you  will want  to customize for
@@ -383,7 +405,7 @@ however, later on you feel a need to change this data, this is how.
 
 
 
-TEXT EDITOR:
+TEXT EDITOR:     The Text Editor don't work any more.
 ===========
 
 The text editor is available from the dos routine, and  may ONLY  edit files
@@ -636,7 +658,7 @@ Also, in  version 3.1A, users can up and download files from Apple computers
 if they want.
 
 
-HELP FILE:
+HELP FILE:       Took the Help file out.
 ==========
 
 Version 3.21 has a special feature - on-line help.  At just  about any point
@@ -1182,4 +1204,3 @@ transfers.
 
                                         Wayne Bell
 
-

@@ -1,12 +1,9 @@
 : MAIN MENU :
 
 A:dd to BBS list   B:BS list           C:hat w/ sysop     D:efaults
-E:mail send        F:eedback to sysop  G:eneral files     H:write macros
-I:nfo on system    J:purge messages    K:ill old e-mail   L:og of the day
-M:ail read         N:Q-scan all boards O:ff the system    P:ost message
-Q:uickscan board   R:emove message     S:can messages     T:ransfer system
+F:eedback to sysop G:eneral files      H:write macros     I:nfo on system
+L:og of the day    M:essage Menu       O:ff the system    T:ransfer system
 U:ser list         V:ote               W:rite auto-msg    X:pert mode
-Y:our info         Z:global "J"        *:board menu       $:change password
-.:other programs  /O:fast logoff      /E:multiple E-mail  ?:this dumb menu
+Y:our info         $:change password   .:other programs   R:ead Bulletins
+P:Gallery          N:Juke Box
 
-Ctrl-Z for online help

@@ -7,4 +7,4 @@
  EDIT      - Edit A File                GFILE     - G-file Edit
  CLS       - Clear Screen               VOTEPRINT - Print Out Votes
  LOADHELP  - Load Help File             QUIT      - Quit Mini-Dos
- XDIR      - Extended Dir Listing
+ XDIR      - Extended Dir Listing

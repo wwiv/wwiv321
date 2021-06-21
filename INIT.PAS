@@ -1,14 +1,14 @@
+{$M 7000,0,60000}
 program init;
-{$V-} {$C-}
 
                       {*****************************}
                       {Copyright (c) 1986 Wayne Bell}
                       {*****************************}
 
+Uses
+  Crt,Common;
 
-{$I COMMON.PAS}
-
-var x:file of str;
+var x:file of astr;
     vdata:file of vdatar;
     vd:vdatar;
     fx:ulrec;
@@ -16,19 +16,22 @@ var x:file of str;
     ns:pnr; fil:file of pnr;
     boards1:boardrec;
     slf1:file of slr;
-    strng:str;
+    strng:astr;
 
-function exist(fn:str):boolean;
+function exist(fn:astr):boolean;
 var f:file;
 begin
   assign(f,fn);
   {$I-} reset(f); {$I+}
-  exist:=(ioresult=0);
-  close(f);
+  if ioresult <> 0 then exist := false else
+  begin
+    exist := true;
+    close(f);
+  end;
 end;
 
-procedure move(s:str);
-var s1,i:str; f,f1:text;
+procedure move(s:astr);
+var s1,i:astr; f,f1:text;
 begin
   if not exist(s) then writeln('"',s,'" isn''t here.') else begin
     writeln('  Moving '+s);
@@ -42,7 +45,7 @@ begin
   end;
 end;
 
-procedure make(s:str);
+procedure make(s:astr);
 var f:text;
 begin
   if not exist('gfiles\'+s) then begin
@@ -54,7 +57,7 @@ begin
   end;
 end;
 
-procedure make1(s:str);
+procedure make1(s:astr);
 var f:text;
 begin
   if not exist('gfiles\'+s) then begin
@@ -145,10 +148,10 @@ begin
     i:='SYSOP'; writeln(fi,i); i:='JEFF THE RIPPER'; writeln(fi,i);
     close(fi);
     move('mainmenu.msg');
+    move('msgmenu.msg');
     move('sysopmnu.msg');
     move('dlmenu.msg');
     move('dosmnu.msg');
-    move('help.msg');
     move('wfcmenu.msg');
     if not exist('seclev.dat') then writeln('"seclev.dat" is missing.') else begin
       writeln('  Moving seclev.dat');
@@ -168,7 +171,7 @@ begin
       ns.hs:=1;
       for fw:=1 to 9 do write(fil,ns);
     end; close(fil);
-    writeln('WWIV v3.20 initialization complete.');
+    writeln('WWIV v3.21-TP70 initialization complete.');
     writeln; writeln;
     writeln('Thank you for using WWIV software.  A $25 donation is requested for using');
     writeln('this software.  Please address any correspondences to:');
@@ -179,5 +182,3 @@ begin
     writeln('             Rolling Hills Estates, CA  90274');
   end;
 end.
-
-

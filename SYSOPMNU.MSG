@@ -12,4 +12,3 @@
 BOARDEDIT   - Edit sub-boards          MAILR       - Read all mail sent
 DLBOARDEDIT - Edit directories         QUIT        - Abort the BBS
 CHAINS      - Edit chain files         CHUSER      - Change to a user
-

@@ -4,6 +4,5 @@
 A:set n-scan dirs   B:browse files     C:chat with sysop   D:download file
 F:find description  L:list files       N:new file search   O:log off
 P:new file date     Q:quit to BBS      R:remove file       S:earch all dir's
-U:upload file       V:verbose .ARC     X:batch d/l         Y:your info
-*:list directories /O:quick logoff     ?:this menu
-
+U:upload file       V:verbose .ARC     X:pert toggle       Y:your info
+*:list directories /O:quick logoff     ?:this menu         E:nter batch menu

@@ -1,13 +1,46 @@
+{$I-,R-,S-,V-,B+,N-}
+
+Unit Common;
+
+                      {*****************************}
+                      {Copyright (c) 1986 Wayne Bell}
+                      {*****************************}
+
+Interface
+
+Uses Crt,Dos;
+
+type
+  astr = String[160];  { generic string type for parameters      }
+                       { note the change from Waynes str => Astr }
+const
+  buffer_max = 5120;
+
+var
+  Async_OriginalVector : pointer;
+  buffer       : Array[0..buffer_max] of char;
+
+  Async_Open_Flag    : Boolean;   { true if Open but no Close }
+  Async_Port         : Integer;   { current Open port number (1 or 2) }
+  base               : Integer;   { base for current open port }
+  Async_Irq          : Integer;   { irq for current open port }
+
+  Async_Buffer_Overflow : Boolean;  { True if buffer overflow has happened }
+  Async_Buffer_Used     : Integer;
+  Async_MaxBufferUsed   : Integer;
+
+                 { buffer is empty if Head = Tail }
+  Buffer_head  : Integer;   { Locn in buffer to put next char }
+  Buffer_tail  : Integer;   { Locn in buffer to get next char }
+  Buffer_newtail : Integer;
+
 CONST strlen=160;
-      maxusers=500;
-      dsaves : Integer = 0;
-      buffer_Max    = 5120;
+      maxusers=100;
       comptyp:array[1..8] of string[14]=
         ('IBM           ','Apple         ','TRS-80        ','Z-80 CP/M     ',
          'Commodore     ','Atari         ','Dumb Terminal ','Other         ');
 
-
-TYPE str=string[strlen];
+TYPE
      restrictions=(rlogon,rchat,rvalidate,rbackspace,ramsg,rpostan,
                    rpost,remail,rvoting,rmsg);
      acrq='@'..'G';
@@ -87,7 +120,7 @@ TYPE str=string[strlen];
                end;
       msgstat=(validated,unvalidated,deleted);
       messagerec=record
-                   title:string[30];
+                   title:string[60];
                    messagestat:msgstat;
                    message:messages;
                    owner:integer;
@@ -117,7 +150,7 @@ TYPE str=string[strlen];
                 end;
       blk=array[1..255] of byte;
       mailrec=record
-                title:string[30];
+                title:string[60];
                 from,destin:integer;
                 msg:messages;
                 date:integer;
@@ -128,15 +161,8 @@ TYPE str=string[strlen];
             title:string[40];
             filen:string[12];
           end;
-      chnft=record
-              filen:string[8];
-              descr:string[40];
-              sl:byte;
-              ar:acrq;
-              ansir:boolean;
-            end;
       smr=record
-            msg:str;
+            msg:astr;
             destin:integer;
           end;
       vdatar=record
@@ -147,7 +173,6 @@ TYPE str=string[strlen];
                       numres:integer;
                     end;
              end;
-      regs=record ax,bx,cx,dx,bp,si,di,ds,es,flags:integer; end;
       ulrec=record
               name:string[25];
               filename:string[12];
@@ -168,13 +193,15 @@ TYPE str=string[strlen];
              end;
       strptr=^strrec;
       strrec=record
-               i:str;
+               i:astr;
                next,last:strptr;
              end;
       zlogt=record
               date:string[8];
               active,calls,post,email,fback,up:integer;
             end;
+      Str255=String[255];
+      Str66=String[66];
 
 CONST dcols:clrs=((7,7,15,15,15,112,15,143),(7,7,11,14,5,31,2,140));
 
@@ -185,48 +212,366 @@ var sf:file of smalrec;
     ulf:file of ulrec;
     uboards:array[0..19] of ulrec;
     maxulb:integer;
-    sysopf:text[1024];
+    helpl:char;
+    helpi:array['0'..'~'] of integer;
+    ihelp,nofile:boolean;
+    sysopf:text{[1024]};
     slf:file of slr;
     seclev:array[0..255] of slr;
     systatf:file of systatrec;
     systat:systatrec;
     sr:smalrec;
-    thisline,chatr,buf,spd,irt,lastname,ll,i:str;
+    thisline,chatr,buf,spd,irt,lastname,ll,i:astr;
     thisuser,user:userrec;
     boards:array[1..19] of boardrec;
-    chns:array[1..9] of chnft;
-    numchns:integer;
     fw,extramsgs,mread,board,numboards,t,usernum:integer;
     pap,lil,realsl,ftoday,ptoday,etoday:integer;
     c,ID:char;
     hungup,useron,next,chatcall,doneday,echo,hangup,incom,outcom:boolean;
     extratime,chattime,timeon:real;
     mailread,smread,macok,lan,enddayf,ch,quit,beepend:boolean;
-    buffer:Array[0..buffer_Max] of Char;
-    base:Integer;
-    Async_Irq:Integer;
-    buffer_Head,buffer_tail,buffer_newtail:Integer;
     smf:file of smr;
     srl:array[0..maxusers] of smalrec;
     vqu:array[1..9] of boolean;
-    ret:byte absolute cseg:$0080;
     ldate:integer;
     cmd:char;
     bread:byte;
     bchanged:boolean;
     mary:array[0..200] of messagerec;
-    helpi:array['0'..'~'] of integer;
-    helpl:char;
-    ihelp:boolean;
     cf:text; cfo,okt:boolean;
     elevel:byte;
     curco:byte;
-    sll:str;
+    sll:astr;
     andwith:byte;
-    checkit:boolean;
+    checkit,comd:boolean;
 
 function freek(d:integer):integer;
-var r:regs;
+function cs:boolean;
+function so:boolean;
+function lcs:boolean;
+function nma:integer;
+function okansi:boolean;
+function commpressed : boolean;
+procedure dump;
+procedure remove_port;
+procedure term_ready(s:Boolean);
+procedure set_baud(r:integer);
+procedure iport;
+function cinkey1:char;
+function cinkey:char;
+procedure o1(c:char);
+procedure o(c:char);
+function timer:real;
+function nsl:real;
+function sysop1:boolean;
+function sysop:boolean;
+procedure sl1(i:astr);
+procedure sysoplog(i:astr);
+function tch(i:astr):astr;
+function time:astr;
+function date:astr;
+function value(I:astr):integer;
+function cstr(i:integer):astr;
+function nam:astr;
+function leapyear(yr:integer):boolean;
+function days(mo,yr:integer):integer;
+function daycount(mo,yr:integer):integer;
+function daynum(dt:astr):integer;
+function dat:astr;
+function cdet:boolean;
+procedure checkhangup;
+procedure getkey(var c:char);
+procedure pr1(i:astr);
+procedure pr(i:astr);
+procedure sdc;
+procedure stsc;
+function xclr(c:integer):astr;
+procedure setc(cl:byte);
+procedure ansic(c:integer);
+procedure prompt(i:astr);
+procedure pausescr;
+procedure print(i:astr);
+procedure nl;
+procedure prt(i:astr);
+procedure ynq(i:astr);
+procedure mpl(c:integer);
+procedure tleft;
+procedure prestrict(u:userrec);
+procedure ff(i:integer);
+procedure topscr;
+function empty:boolean;
+procedure skey1(var c:char);
+function inkey:char;
+procedure oc(c:char);
+procedure outkey(c:char);
+procedure ptime;
+procedure skey(var c:char);
+procedure dm(i:astr; var c:char);
+procedure cls;
+procedure wait(b:boolean);
+procedure chsl;
+procedure swac(var u:userrec;r:restrictions);
+procedure acch(c:char; var u:userrec);
+procedure chac(var thisuser:userrec);
+procedure chbac;
+procedure chdsl;
+procedure tfile;
+procedure inli1(var i:astr);
+procedure chat;
+function yn:boolean;
+procedure input1(var i:astr; ml:integer; tf:boolean);
+procedure input(var i:astr; ml:integer);
+procedure inputl(var i:astr; ml:integer);
+procedure onek(var c:char; ch:astr);
+procedure onek2(var c:char; ch:astr); {Added because I use a Modified}
+procedure centre(var i:astr);
+procedure wkey(var abort,next:boolean);
+procedure printa1(i:astr; var abort,next:boolean);
+procedure printa(i:astr; var abort,next:boolean);
+procedure printacr(i:astr; var abort,next:boolean);
+function ctim(rl:real):astr;
+function tlef:astr;
+function cstrr(rl:real; base:integer):astr;
+procedure savesystat;
+procedure pfl(fn:astr; var abort:boolean; cr:boolean);
+procedure printfile(fn:astr);
+Procedure Print_File (fn:astr);  {Another Addiitional Mod}
+procedure printf(fn:astr);
+procedure Async_Init;
+procedure Async_Close;
+function Async_Open(ComPort:Integer; BaudRate:Integer;Parity:Char;
+                    WordSize:Integer; StopBits:Integer):Boolean;
+
+IMPLEMENTATION
+
+const
+  UART_THR = $00;    { offset from base of UART Registers for IBM PC }
+  UART_RBR = $00;
+  UART_IER = $01;
+  UART_IIR = $02;
+  UART_LCR = $03;
+  UART_MCR = $04;
+  UART_LSR = $05;
+  UART_MSR = $06;
+  I8088_IMR = $21;   { port address of the Interrupt Mask Register }
+
+var
+  Async_BIOS_Port_Table : Array[1..2] of Integer absolute $40:0;
+               { This table is initialized by BIOS equipment determination
+                 code at boot time to contain the base addresses for the
+                 installed async adapters.  A value of 0 means "not in-
+                 stalled." }
+
+const
+  Async_Num_Bauds = 8;
+  Async_Baud_Table : array [1..Async_Num_Bauds] of record
+                                                     Baud, Bits : integer
+                                                   end
+                   = ((Baud:110;  Bits:$00),
+                      (Baud:150;  Bits:$20),
+                      (Baud:300;  Bits:$40),
+                      (Baud:600;  Bits:$60),
+                      (Baud:1200; Bits:$80),
+                      (Baud:2400; Bits:$A0),
+                      (Baud:4800; Bits:$C0),
+                      (Baud:9600; Bits:$E0));
+
+PROCEDURE DisableInterrupts; inline($FA {cli} );     {MACROS}
+PROCEDURE EnableInterrupts;  inline($FB {sti} );
+
+procedure BIOS_RS232_Init(ComPort, ComParm : Integer);
+{ Issue Interrupt $14 to initialize the UART }
+{ See the IBM PC Technical Reference Manual for the format of ComParm }
+var
+  Regs : registers;
+begin
+  with Regs do
+    begin
+      ax := ComParm and $00FF;  { AH=0; AL=ComParm }
+      dx := ComPort;
+      Intr($14, Regs)
+    end
+end; { BIOS_RS232_Init }
+
+procedure Async_Isr;  INTERRUPT;
+{ Interrupt Service Routine }
+{ Invoked when the UART has received a byte of data from the
+  communication line }
+{ re-written 9/10/84 to be entirely in machine language; original source
+  left as comments }
+begin
+  Inline(
+    $FB/                           { STI }
+      { get the incomming character }
+      { buffer[Buffer_head] := Chr(Port[UART_RBR + base]); }
+    $8B/$16/base/                  { MOV DX,base }
+    $EC/                           { IN AL,DX }
+    $8B/$1E/Buffer_head/           { MOV BX,Buffer_head }
+    $88/$87/buffer/                { MOV buffer[BX],AL }
+      { Async_Buffer_NewHead := Buffer_head + 1; }
+    $43/                           { INC BX }
+      { if Async_Buffer_NewHead > buffer_max then
+          Async_Buffer_NewHead := 0; }
+    $81/$FB/buffer_max/            { CMP BX,buffer_max }
+    $7E/$02/                       { JLE L001 }
+    $33/$DB/                       { XOR BX,BX }
+      { if Async_Buffer_NewHead = Buffer_tail then
+          Async_Buffer_Overflow := TRUE
+        else }
+{L001:}
+    $3B/$1E/Buffer_tail/     { CMP BX,Buffer_tail }
+    $75/$08/                       { JNE L002 }
+    $C6/$06/Async_Buffer_Overflow/$01/ { MOV Async_Buffer_Overflow,1 }
+    $90/                           { NOP generated by assembler for some reason }
+    $EB/$16/                       { JMP SHORT L003 }
+      { begin
+          Buffer_head := Async_Buffer_NewHead;
+          Async_Buffer_Used := Async_Buffer_Used + 1;
+          if Async_Buffer_Used > Async_MaxBufferUsed then
+            Async_MaxBufferUsed := Async_Buffer_Used
+        end; }
+{L002:}
+    $89/$1E/Buffer_head/           { MOV Buffer_head,BX }
+    $FF/$06/Async_Buffer_Used/     { INC Async_Buffer_Used }
+    $8B/$1E/Async_Buffer_Used/     { MOV BX,Async_Buffer_Used }
+    $3B/$1E/Async_MaxBufferUsed/   { CMP BX,Async_MaxBufferUsed }
+    $7E/$04/                       { JLE L003 }
+    $89/$1E/Async_MaxBufferUsed/   { MOV Async_MaxBufferUsed,BX }
+{L003:}
+      { disable interrupts }
+    $FA/                           { CLI }
+      { Port[$20] := $20; }        { use non-specific EOI }
+    $B0/$20/                       { MOV AL,20h }
+    $E6/$20                        { OUT 20h,AL }
+       )
+end; { Async_Isr }
+
+procedure Async_Init;
+{ initialize variables }
+begin
+  Async_Open_Flag := FALSE;
+  Async_Buffer_Overflow := FALSE;
+  Async_Buffer_Used := 0;
+  Async_MaxBufferUsed := 0;
+end; { Async_Init }
+
+procedure Async_Close;
+{ reset the interrupt system when UART interrupts no longer needed }
+var
+  i, m : Integer;
+begin
+  if Async_Open_Flag then
+    begin
+
+      { disable the IRQ on the 8259 }
+      DisableInterrupts;
+      i := Port[I8088_IMR];        { get the interrupt mask register }
+      m := 1 shl Async_Irq;        { set mask to turn off interrupt }
+      Port[I8088_IMR] := i or m;
+
+      { disable the 8250 data ready interrupt }
+      Port[UART_IER + base] := 0;
+
+      { disable OUT2 on the 8250 }
+      Port[UART_MCR + base] := 0;
+      EnableInterrupts;
+
+      SetIntVec(Async_Irq + 8,Async_OriginalVector);
+
+      { re-initialize our data areas so we know the port is closed }
+      Async_Open_Flag := FALSE
+
+    end
+end; { Async_Close }
+
+function Async_Open(ComPort       : Integer;
+                    BaudRate      : Integer;
+                    Parity        : Char;
+                    WordSize      : Integer;
+                    StopBits      : Integer) : Boolean;
+{ open a communications port }
+var
+  ComParm : Integer;
+  i, m : Integer;
+begin
+  if Async_Open_Flag then Async_Close;
+
+  if (ComPort = 2) and (Async_BIOS_Port_Table[2] <> 0) then
+    Async_Port := 2
+  else
+    Async_Port := 1;  { default to COM1 }
+  base := Async_BIOS_Port_Table[Async_Port];
+  Async_Irq := Hi(base) + 1;
+
+  if (Port[UART_IIR + base] and $00F8) <> 0 then
+    Async_Open := FALSE
+  else
+    begin
+      Buffer_head := 0;
+      Buffer_tail := 0;
+      Async_Buffer_Overflow := FALSE;
+
+  { Build the ComParm for RS232_Init }
+  { See Technical Reference Manual for description }
+
+      ComParm := $0000;
+
+  { Set up the bits for the baud rate }
+      i := 0;
+      repeat
+        i := i + 1
+      until (Async_Baud_Table[i].Baud = BaudRate) or (i = Async_Num_Bauds);
+      ComParm := ComParm or Async_Baud_Table[i].Bits;
+
+      if Parity in ['E', 'e'] then ComParm := ComParm or $0018
+      else if Parity in ['O', 'o'] then ComParm := ComParm or $0008
+      else ComParm := ComParm or $0000;  { default to No parity }
+
+      if WordSize = 7 then ComParm := ComParm or $0002
+      else ComParm := ComParm or $0003;  { default to 8 data bits }
+
+      if StopBits = 2 then ComParm := ComParm or $0004
+      else ComParm := ComParm or $0000;  { default to 1 stop bit }
+
+  { use the BIOS COM port initialization routine to save typing the code }
+      BIOS_RS232_Init(Async_Port - 1, ComParm);
+
+      GetIntVec(Async_Irq + 8, Async_OriginalVector);
+      SetIntVec(Async_Irq + 8, @Async_Isr);
+
+  { read the RBR and reset any possible pending error conditions }
+  { first turn off the Divisor Access Latch Bit to allow access to RBR, etc. }
+
+      DisableInterrupts;
+
+      Port[UART_LCR + base] := Port[UART_LCR + base] and $7F;
+  { read the Line Status Register to reset any errors it indicates }
+      i := Port[UART_LSR + base];
+  { read the Receiver Buffer Register in case it contains a character }
+      i := Port[UART_RBR + base];
+
+  { enable the irq on the 8259 controller }
+      i := Port[I8088_IMR];  { get the interrupt mask register }
+      m := (1 shl Async_Irq) xor $00FF;
+      Port[I8088_IMR] := i and m;
+
+  { enable the data ready interrupt on the 8250 }
+      Port[UART_IER + base] := $01; { enable data ready interrupt }
+
+  { enable OUT2 on 8250 }
+      i := Port[UART_MCR + base];
+      Port[UART_MCR + base] := i or $08;
+
+      EnableInterrupts;
+      Async_Open_Flag := TRUE;  { bug fix by Scott Herr }
+      Async_Open := TRUE
+    end
+end; { Async_Open }
+
+{End of Async Routines}
+
+function freek(d:integer):integer;
+var r:registers;
 begin
   r.ax:=$3600;
   r.dx:=d;
@@ -265,32 +610,17 @@ begin
 end;
 
 procedure dump;
-begin
-  inline($FA);
+Begin
+  disableinterrupts;  {Replaces the old inline $FA}
   buffer_head:=0;
   buffer_tail:=buffer_head;
-  inline($FB);
-end;
-
-procedure async_isr;
-begin
-  inline($50/$53/$52/$1E/$FB/$2E/$FF/$36/dsaves/$1F/$8B/$16/base/
-         $EC/$8B/$1E/buffer_Head/$88/$87/buffer/$43/$81/$FB/buffer_Max/$7E/
-         $02/$33/$DB/$3B/$1E/buffer_Tail/$74/$04/$89/$1E/buffer_Head/$FA/
-         $B0/$20/$E6/$20/$1F/$5A/$5B/$58/$5C/$5D/$CF);
+  enableinterrupts;   {Replaces the old inline $FB}
 end;
 
 procedure remove_port;
-var
-  i,m:integer;
-begin
-  inline($FA);
-  i := port[$21];
-  m := 1 shl Async_Irq;
-  port[$21] := i or m;
-  port[2+base] := 0;
-  port[4+base] := port[4+base] and 1;
-  inline($FB);
+{This routes all WWIV 3 calls to the new Close Port routine}
+Begin
+  Async_Close;
 end;
 
 procedure term_ready(s:Boolean);
@@ -316,38 +646,10 @@ begin
 end;
 
 procedure iport;
-var
-   i,m:Integer;
-   regs:record ax,bx,cx,dx,bp,si,di,ds,es,flags:integer; end;
-begin
-  dsaves:= DSeg;
-  If systat.comport = 2 Then begin
-    base := $2f8;
-    Async_Irq  := 3;
-  end else begin
-    base := $3f8;
-    Async_Irq  := 4;
-  end;
-  If (Port[2+base] and $00F8) <> 0 Then
-    begin writeln('Illegal com port number'); halt; end
-  else begin
-    buffer_Head:=0; buffer_Tail:=0; port[base+3]:=$03;
-    with regs do begin
-      ax:=$2500+((async_irq+8) and $00ff); ds:=cseg;
-      dx:=ofs(async_isr); msdos(regs);
-    end;
-    inline($FA);
-    i:=port[5+base];
-    i:=port[base];
-    i:=port[$21];
-    m:=(1 shl Async_Irq) xor $00FF;
-    port[$21] := i and m;
-    port[1+base] := $01;
-    i := port[4+base];
-    port[4+base] := i or $08;
-    term_ready(true);
-    inline($FB);
-  end;
+{This routes all WWIV 3 calls to the new Intialize Port routine}
+Begin
+  Async_init;
+  Write(Async_open(1,2400,'N',8,1));
 end;
 
 function cinkey1:char;
@@ -356,10 +658,10 @@ begin
   if buffer_Head = buffer_Tail Then
     t:=#0
   else begin
-    inline($FA);
+    disableinterrupts;
     t:=buffer[buffer_Tail];
     buffer_Tail:=(buffer_Tail+1) mod (buffer_max+1);
-    inline($FB);
+    enableinterrupts;
   end;
   cinkey1:=t;
 end;
@@ -379,17 +681,16 @@ end;
 
 procedure o(c:char);
 begin
-  if outcom and (c<>#1) then o1(c);
+  if outcom and (c<>#1) then
+    o1(c);
 end;
 
 function timer:real;
-var reg:record
-          ax,bx,cx,dx,bp,si,di,ds,es,flags:integer;
-        end;
+var reg:registers;
     h,m,s,t:real;
 begin
   reg.ax:=44*256;
-  msdos(reg);
+  msdos(Dos.Registers(reg));
   h:=(reg.cx div 256);
   m:=(reg.cx mod 256);
   s:=(reg.dx div 256);
@@ -422,47 +723,43 @@ begin
   end;
 end;
 
-procedure sl1(i:str);
+procedure sl1(i:astr);
 begin
   writeln(sysopf,i);
 end;
 
-procedure sysoplog(i:str);
+procedure sysoplog(i:astr);
 begin
   if (realsl<>255) or incom then
     sl1('   '+i);
 end;
 
-function tch(i:str):str;
+function tch(i:astr):astr;
 begin
   if length(i)>2 then i:=copy(i,length(i)-1,2) else
     if length(i)=1 then i:='0'+i;
   tch:=i;
 end;
 
-function time:str;
-var reg:record
-          ax,bx,cx,dx,bp,si,di,ds,es,flags:integer;
-        end;
+function time:astr;
+var reg:registers;
     h,m,s:string[4];
 begin
-  reg.ax:=$2c00; intr($21,reg);
+  reg.ax:=$2c00; intr($21,Dos.Registers(reg));
   str(reg.cx shr 8,h); str(reg.cx mod 256,m); str(reg.dx shr 8,s);
   time:=tch(h)+':'+tch(m)+':'+tch(s);
 end;
 
-function date:str;
-var reg:record
-          ax,bx,cx,dx,bp,si,di,ds,es,flags:integer;
-        end;
+function date:astr;
+var reg:registers;
     m,d,y:string[4];
 begin
-  reg.ax:=$2a00; msdos(reg); str(reg.cx,y); str(reg.dx mod 256,d);
+  reg.ax:=$2a00; msdos(Dos.Registers(reg)); str(reg.cx,y); str(reg.dx mod 256,d);
   str(reg.dx shr 8,m);
   date:=tch(m)+'/'+tch(d)+'/'+tch(y);
 end;
 
-function value(I:str):integer;
+function value(I:astr):integer;
 var n,n1:integer;
 begin
   val(i,n,n1);
@@ -474,14 +771,14 @@ begin
   if i='' then value:=0;
 end;
 
-function cstr(i:integer):str;
-var c:str;
+function cstr(i:integer):astr;
+var c:astr;
 begin
   str(i,c); cstr:=c;
 end;
 
-function nam:str;
-var s:str; i:integer; tf:boolean;
+function nam:astr;
+var s:astr; i:integer; tf:boolean;
 begin
   s:=thisuser.name;
   tf:=true;
@@ -517,7 +814,7 @@ begin
   daycount:=t;
 end;
 
-function daynum(dt:str):integer;
+function daynum(dt:astr):integer;
 var d,m,y,t,c:integer;
 begin
   t:=0;
@@ -531,8 +828,8 @@ begin
   if y<1985 then daynum:=0;
 end;
 
-function dat:str;
-var ap,x,y:str; i:integer;
+function dat:astr;
+var ap,x,y:astr; i:integer;
 begin
   case daynum(date) mod 7 of
     0:x:='Tue';
@@ -577,15 +874,65 @@ begin
   end;
 end;
 
-procedure getkey(var c:char); forward;
+procedure ptime;
+var i:astr;
+begin
+  if useron then begin
+    i:=thisline;
+    nl; nl; print(dat);
+    print('Time left: '+tlef);
+    print('Time on  : '+ctim(timer-timeon));
+    nl; prompt(i);
+  end;
+end;
 
-procedure pr1(i:str);
+procedure skey(var c:char);
+begin
+  case ord(c) of
+      6:if macok and (buf='') then dm(thisuser.macro[2],c);
+      4:if macok and (buf='') then dm(thisuser.macro[1],c);
+     20:ptime;
+    127:c:=#8;
+   end;
+end;
+
+procedure getkey(var c:char);
+var t:real; b,tf,t1:boolean;
+begin
+  lil:=0;
+  if buf<>'' then begin
+    c:=buf[1]; buf:=copy(buf,2,length(buf)-1);
+  end else
+    if not empty then c:=inkey
+    else begin
+      t:=timer; t1:=false; tf:=false;
+      c:=#0;
+      while (c=#0) and not hangup do begin
+        c:=inkey;
+        if ((timer-t)>180) and (c=#0) then begin nl;
+          print('Call back later when you are there.');hangup:=true;
+          sysoplog('!-! Timeout !-!');
+        end;
+        if ((timer-t)>90) and (not tf) and (c=#0) then begin tf:=true; outkey(chr(7)); end;
+        checkhangup;
+      end;
+    end;
+    if checkit then
+      if (ord(c) and 128)>0 then begin
+        checkit:=false;
+        andwith:=127;
+        c:=chr(ord(c) and andwith);
+      end;
+  skey(c);
+end;
+
+procedure pr1(i:astr);
 var c:integer;
 begin
   for c:=1 to length(i) do o1(i[c]);
 end;
 
-procedure pr(i:str);
+procedure pr(i:astr);
 begin
   pr1(i+#13);
 end;
@@ -605,7 +952,7 @@ begin
   textcolor(14); textbackground(0);
 end;
 
-function xclr(c:integer):str;
+function xclr(c:integer):astr;
 begin
   case c of
     0:xclr:='0';
@@ -620,8 +967,8 @@ begin
 end;
 
 procedure setc(cl:byte);
-var i:str;
-  procedure adto(ii:str);
+var i:astr;
+  procedure adto(ii:astr);
   begin
     if (i[length(i)]<>';') and (i[length(i)]<>'[') then i:=i+';';
     i:=i+ii;
@@ -653,18 +1000,7 @@ begin
       setc(thisuser.cols[false,c]);
 end;
 
-procedure prompt(i:str); forward;
-
-procedure pausescr;
-var i:integer; cc:char;
-begin
-  ansic(5); prompt('(-*-)'); ansic(0);
-  getkey(cc);
-  for i:=1 to 5 do
-    prompt(#8+' '+#8);
-end;
-
-procedure prompt;
+procedure prompt(i:astr);
 var c:integer; cc:char;
 begin
  checkhangup;
@@ -675,13 +1011,11 @@ begin
         if (curco<>thisuser.cols[color in thisuser.defaults,1]) then
           ansic(0);
     if (not ((i[c]=chr(7)) and (incom))) and (i[c]<>chr(12)) and (i<>#1) then write(i[c]);
-    if chatcall then sound(1000);
     o(i[c]);
     if i[c]>#31 then thisline:=thisline+i[c];
     if i[c]=#8 then if length(thisline)>0 then thisline:=copy(thisline,1,length(thisline)-1);
     if i[c]=chr(12) then begin lil:=0; clrscr; end;
     if i[c]=chr(13) then begin pap:=0; thisline:=''; end;
-    nosound;
     if i[c]=chr(10) then begin
       lil:=lil+1;
       if (lil>=thisuser.pagelen-1) then begin
@@ -693,7 +1027,16 @@ begin
  end;
 end;
 
-procedure print(i:str);
+procedure pausescr;
+var i:integer; cc:char;
+begin
+  ansic(5); prompt('(-More-)'); ansic(0);
+  getkey(cc);
+  for i:=1 to 8 do
+    prompt(#8+' '+#8);
+end;
+
+procedure print(i:astr);
 begin
   prompt(i+chr(13)+chr(10))
 end;
@@ -703,18 +1046,18 @@ begin
   prompt(chr(13)+chr(10))
 end;
 
-procedure prt(i:str);
+procedure prt(i:astr);
 begin
   ansic(4); prompt(i); ansic(0);
 end;
 
-procedure ynq(i:str);
+procedure ynq(i:astr);
 begin
   ansic(7); prompt(i);
 end;
 
 procedure mpl(c:integer);
-var n:integer; i:str;
+var n:integer; i:astr;
 begin
  if okansi then begin
   ansic(6);
@@ -783,7 +1126,13 @@ begin
   stsc;
   x:=wherex; y:=wherey;
   window(1,1,80,5);
-  gotoxy(1,1); write(chr(186),' ',nam); ff(35);
+  for i:=1 to 4 do
+   begin
+    gotoxy(1,i);
+    clreol;
+   End;
+  gotoxy(1,1);
+  write(chr(186),' ',nam); ff(35);
   with thisuser do begin
     write(realname);ff(50);write(ph);ff(65);
     if laston<>date then write(laston) else write(ontoday,'       ');
@@ -806,7 +1155,8 @@ begin
       write(chr(205));
     write(chr(188));
   end;
-  window(1,5,80,25);gotoxy(x,y);
+  window(1,5,80,25);
+  gotoxy(x,y);
   tleft;
   sdc;
  end;
@@ -819,16 +1169,57 @@ begin
   if hangup then begin dump; empty:=true; end;
 end;
 
-procedure skey1(var c:char); forward;
+procedure skey1(var c:char);
+var b:boolean;
+begin
+  case ord(c) of
+    59:chsl;
+    60:chac(thisuser);
+    61:begin
+         if outcom then incom:=not incom;
+         writeln; if incom then writeln('<INPUT ENABLED>')
+           else writeln('<COM DISABLED>');
+         writeln;dump;
+         write(thisline);
+       end;
+    62:begin chatcall:=false; thisuser.option:=thisuser.option-[alert]; end;
+    63:hangup:=true;
+    64:tleft;
+    65:begin b:=ch; ch:=true; extratime:=extratime-5*60; tleft; ch:=b;end;
+    66:begin b:=ch; ch:=true; extratime:=extratime+5*60; tleft; ch:=b;end;
+    67:begin
+          if thisuser.sl=255 then if realsl<>255 then begin
+            thisuser.sl:=realsl; writeln;writeln;writeln('<SECLEV RESTORED>');
+            writeln; write(thisline); end
+          else else begin
+            thisuser.sl:=255; writeln;writeln;writeln('<TEMP SYSOP GRANTED>');
+            writeln; write(thisline);
+          end; topscr;
+        end;
+    68:if ch then
+         ch:=false
+       else begin
+         chat;
+       end;
+    71:if ch then tfile;
+    84:chdsl;
+    85:chbac;
+    90:begin b:=ch; ch:=true; extramsgs:=extramsgs-10; tleft; ch:=b;  end;
+    91:begin b:=ch; ch:=true; extramsgs:=extramsgs+10; tleft; ch:=b;  end;
+    93:begin beepend:=not beepend; b:=ch; ch:=true; tleft; ch:=b; end;
+  end;
+end;
 
 function inkey:char;
 var c:char;
 begin
   c:=chr(0); inkey:=chr(0);
   if keypressed then begin
-    read(kbd,c); if c=chr(27) then
+    c := readkey; if c=#0 then
+{    read(kbd,c); if c=chr(27) then}
       if keypressed then begin
-        read(kbd,c);
+       { read(kbd,c);}
+        c:=readkey;
         skey1(c);
         if c=#68 then
           c:=#1
@@ -858,47 +1249,13 @@ begin
   if c=#7 then begin o(#0); o(#0); o(#0); o(#0); end;
 end;
 
-procedure phelp; forward;
-procedure ptime; forward;
-procedure skey(var c:char); forward;
-
-procedure dm(i:str; var c:char);
+procedure dm(i:astr; var c:char);
 begin
   buf:=i;
   if buf<>'' then begin
     c:=buf[1];
     buf:=copy(buf,2,length(buf)-1);
   end;
-end;
-
-procedure getkey;
-var t:real; b,tf,t1:boolean;
-begin
-  lil:=0;
-  if buf<>'' then begin
-    c:=buf[1]; buf:=copy(buf,2,length(buf)-1);
-  end else
-    if not empty then c:=inkey
-    else begin
-      t:=timer; t1:=false; tf:=false; 
-      c:=#0;
-      while (c=#0) and not hangup do begin
-        c:=inkey;
-        if ((timer-t)>180) and (c=#0) then begin nl;
-          print('Call back later when you are there.');hangup:=true;
-          sysoplog('!-! Timeout !-!');
-        end;
-        if ((timer-t)>90) and (not tf) and (c=#0) then begin tf:=true; outkey(chr(7)); end;
-        checkhangup;
-      end;
-    end;
-    if checkit then
-      if (ord(c) and 128)>0 then begin
-        checkit:=false;
-        andwith:=127;
-        c:=chr(ord(c) and andwith);
-      end;
-  skey(c);
 end;
 
 procedure cls;
@@ -922,7 +1279,7 @@ begin
 end;
 
 procedure chsl;
-var ij,i:str; c:integer;
+var ij,i:astr; c:integer;
 begin
  wait(true);
  write('Enter new SL: ');
@@ -958,19 +1315,20 @@ begin
 end;
 
 procedure chac(var thisuser:userrec);
-var c:char; ij,i:str; cc:integer;
+var c:char; ij,i:astr; cc:integer;
 begin
   wait(true);
-  writeln('LCVBA*PEKM');writeln;write('Which? '); read(kbd,c); c:=upcase(c); writeln(c); writeln;
+  writeln('LCVBA*PEKM');writeln;write('Which? ');
+  c:=readkey; c:=upcase(c); writeln(c); writeln;
   acch(c,thisuser);
   wait(false);
 end;
 
 procedure chbac;
-var c:char; ij,i:str; cc:integer;
+var c:char; ij,i:astr; cc:integer;
 begin
   wait(true);
-  write('Which board? '); read(kbd,c); c:=upcase(c); writeln(c);
+  write('Which board? '); c:=readkey; c:=upcase(c); writeln(c);
   if c in ['A'..'G'] then
     if c in thisuser.ar then
       thisuser.ar:=thisuser.ar-[c]
@@ -980,7 +1338,7 @@ begin
 end;
 
 procedure chdsl;
-var ij,i:str; c:integer;
+var ij,i:astr; c:integer;
 begin
  wait(true);
  writeln('UL=',thisuser.uploads,'-',thisuser.uk,'K   DL=',thisuser.downloads,'-',thisuser.dk,'K');
@@ -990,7 +1348,7 @@ begin
 end;
 
 procedure tfile;
-var i:str; ii:integer;
+var i:astr; ii:integer;
 bf:file of byte; cr:boolean;
 begin
   if cfo then begin
@@ -1014,7 +1372,7 @@ begin
   end;
 end;
 
-procedure inli1(var i:str);
+procedure inli1(var i:astr);
 var cp:integer; c:char; cv,cc:integer;
 begin
   cp:=1;
@@ -1060,14 +1418,16 @@ begin
 end;
 
 procedure chat;
-var c,ohl:char; tf:boolean; sp,xx:str; x:integer; t,t1:real;
+var c:char; tf:boolean; sp,xx:astr; x:integer; t,t1:real;
 begin
   sp:=thisline; ch:=true; chatcall:=false; tf:=echo; echo:=true;nl;nl; t:=timer;
-  thisuser.option:=thisuser.option-[alert]; ohl:=helpl; helpl:=#0;
-  ansic(5); print('Sysop''s here...'); nl;
-  if chatr<>'' then begin
-    writeln; writeln; writeln('Reason: ',chatr); writeln; writeln; chatr:='';
-  end;
+  thisuser.option:=thisuser.option-[alert];
+  if chatr<>'' then
+    begin
+      writeln('                    *** Reason for Chat: ',chatr,' ***');
+      chatr:='';
+    end;
+  ansic(5); print('Sysop''s here, go ahead '+ thisuser.realname + ' ...'); nl;
   repeat
     inli1(xx);
     if (xx='/quitchat') or (xx='/QUITCHAT') then begin
@@ -1075,66 +1435,13 @@ begin
       if not keypressed then ch:=false;
     end else if cfo then writeln(cf,xx);
   until (not ch) or hangup;
-  nl; ansic(5); print('Chat mode over...'); nl;
+  nl; ansic(5); print('Chat mode completed, standby for return ...'); nl;
   chattime:=chattime+timer-t; ch:=false; echo:=tf;
   if hangup and cfo then begin
     writeln(cf); writeln(cf,'<HANGUP>');
   end;
   prompt(sp); thisline:=sp;
   if cfo then begin cfo:=false; close(cf); end;
-  helpl:=ohl;
-end;
-
-procedure skey;
-begin
-  case ord(c) of
-      6:if macok and (buf='') then dm(thisuser.macro[2],c);
-      4:if macok and (buf='') then dm(thisuser.macro[1],c);
-     26:if not ihelp then phelp;
-     20:ptime;
-    127:c:=#8;
-   end;
-end;
-
-procedure skey1;
-var b:boolean;
-begin
-  case ord(c) of
-    59:chsl;
-    60:chac(thisuser);
-    61:begin
-         if outcom then incom:=not incom;
-         writeln; if incom then writeln('<INPUT ENABLED>')
-           else writeln('<COM DISABLED>');
-         writeln;dump;
-         write(thisline);
-       end;
-    62:begin chatcall:=false; thisuser.option:=thisuser.option-[alert]; end;
-    63:hangup:=true;
-    64:tleft;
-    65:begin b:=ch; ch:=true; extratime:=extratime-5*60; tleft; ch:=b;end;
-    66:begin b:=ch; ch:=true; extratime:=extratime+5*60; tleft; ch:=b;end;
-    67:begin
-          if thisuser.sl=255 then if realsl<>255 then begin
-            thisuser.sl:=realsl; writeln;writeln;writeln('<SECLEV RESTORED>');
-            writeln; write(thisline); end
-          else else begin
-            thisuser.sl:=255; writeln;writeln;writeln('<TEMP SYSOP GRANTED>');
-            writeln; write(thisline);
-          end; topscr;
-        end;
-    68:if ch then
-         ch:=false
-       else begin
-         chat;
-       end;
-    71:if ch then tfile;
-    84:chdsl;
-    85:chbac;
-    90:begin b:=ch; ch:=true; extramsgs:=extramsgs-10; tleft; ch:=b;  end;
-    91:begin b:=ch; ch:=true; extramsgs:=extramsgs+10; tleft; ch:=b;  end;
-    93:begin beepend:=not beepend; b:=ch; ch:=true; tleft; ch:=b; end;
-  end;
 end;
 
 function yn:boolean;
@@ -1151,7 +1458,7 @@ begin
   end;
 end;
 
-procedure input1(var i:str; ml:integer; tf:boolean);
+procedure input1(var i:astr; ml:integer; tf:boolean);
 var cp:integer;
     c:char;
     r:real;
@@ -1190,19 +1497,18 @@ begin
  end;
 end;
 
-procedure input(var i:str; ml:integer);
+procedure input(var i:astr; ml:integer);
 begin
   input1(i,ml,false);
 end;
 
-
-procedure inputl(var i:str; ml:integer);
+procedure inputl(var i:astr; ml:integer);
 begin
   input1(i,ml,true);
 end;
 
-procedure onek(var c:char; ch:str);
- var i1,i:str; tf:boolean;
+procedure onek(var c:char; ch:astr);
+var i1,i:astr; tf:boolean;
 begin
   i1:=thisline; tf:=false;
   repeat
@@ -1220,7 +1526,20 @@ begin
   if onekey in thisuser.defaults then print(''+c);
 end;
 
-procedure centre(var i:str);
+procedure onek2(var c:char; ch:astr);
+var i1,i:astr; tf:boolean;
+begin
+  i1:=thisline; tf:=false;
+  repeat
+    getkey(c);
+    c:=upcase(c);
+    tf:=true;
+  until (pos(c,ch)>0) or hangup;
+  if hangup then c:=ch[1];
+  prt(''+c);
+end;
+
+procedure centre(var i:astr);
 var n,n1:integer;
 begin
   if pap<>0 then nl;
@@ -1238,8 +1557,8 @@ begin
       (thisuser.linelen-n) div 2)+i;
 end;
 
- procedure wkey(var abort,next:boolean);
- var cc:char;
+procedure wkey(var abort,next:boolean);
+var cc:char;
  begin
     while not (empty or hangup or abort) do begin
       getkey(cc);
@@ -1252,7 +1571,7 @@ end;
     end;
  end;
 
-procedure printa1(i:str; var abort,next:boolean);
+procedure printa1(i:astr; var abort,next:boolean);
 var c:integer;
 begin
  checkhangup;
@@ -1278,8 +1597,8 @@ begin
  end else abort:=true;
 end;
 
-procedure printa(i:str; var abort,next:boolean);
-var s:str; p,op,rp,rop,nca:integer; crend:boolean;
+procedure printa(i:astr; var abort,next:boolean);
+var s:astr; p,op,rp,rop,nca:integer; crend:boolean;
 begin
   abort:=false;
   crend:=(i[length(i)]=#1) and (i[length(i)-1]<>#3);
@@ -1321,7 +1640,7 @@ begin
   end;
 end;
 
-procedure printacr(i:str; var abort,next:boolean);
+procedure printacr(i:astr; var abort,next:boolean);
 begin
  if not abort then
   if i[length(i)]=#1 then
@@ -1330,8 +1649,8 @@ begin
     printa(i+#1,abort,next);
 end;
 
-function ctim(rl:real):str;
-var h,m,s:str;
+function ctim(rl:real):astr;
+var h,m,s:astr;
 begin
   s:=tch(cstr(trunc(rl-int(rl/60.0)*60.0)));
   m:=tch(cstr(trunc(int(rl/60.0)-int(rl/3600.0)*60.0)));
@@ -1340,65 +1659,13 @@ begin
   ctim:=h+':'+m+':'+s;
 end;
 
-function tlef:str;
+function tlef:astr;
 begin
   tlef:=ctim(nsl);
 end;
 
-procedure phelp;
-var i,lli:str; abort,next:boolean;
-    f:file; ch:array[1..4096] of char; max,c:integer;
-begin
-  ihelp:=true;
-  lli:=thisline;
-  if helpl in ['0'..'^'] then
-    if helpi[helpl]>0 then begin
-      assign(f,'gfiles\help.msg');
-      {$I-} reset(f,1); {$I+}
-      if ioresult=0 then begin
-        seek(f,helpi[helpl]);
-        ansic(0);
-        cls; c:=4096; max:=4096; ch[4096]:=' ';
-        i:=''; abort:=false;
-        while (ch[c]<>'|') and (not abort) and (not hangup) and (max>0) do begin
-          if c>=max then
-            if max=4096 then begin
-              blockread(f,ch,4096,max);
-              c:=1;
-            end else begin
-              max:=0; c:=0;
-            end
-          else
-            if ch[c]=#10 then begin
-              printacr(i,abort,next);
-              i:='';
-            end else
-              if ch[c]<>#13 then
-                i:=i+ch[c];
-          c:=c+1;
-        end;
-        nl; nl; nl;
-        prompt(lli);
-      end;
-      close(f);
-    end;
-  ihelp:=false;
-end;
-
-procedure ptime;
-var i:str;
-begin
-  if useron then begin
-    i:=thisline;
-    nl; nl; print(dat);
-    print('Time left: '+tlef);
-    print('Time on  : '+ctim(timer-timeon));
-    nl; prompt(i);
-  end;
-end;
-
-function cstrr(rl:real; base:integer):str;
-var c1,c2,c3:integer; i:str; r1,r2:real;
+function cstrr(rl:real; base:integer):astr;
+var c1,c2,c3:integer; i:astr; r1,r2:real;
 begin
  if rl<=0.0 then cstrr:='0' else begin
   r1:=ln(rl)/ln(1.0*base);
@@ -1414,40 +1681,14 @@ begin
  end;
 end;
 
-procedure erhnd(erno,eradr:integer);
-var i1:str; rl:real; f:text;
-begin
-  close(uf);
-  close(mailfile);
-  close(sysopf);
-  close(cf);
-  writeln; writeln;
-  term_ready(false);
-  case hi(erno) of
-    0:i1:='Ctrl-C error';
-    1:i1:='I/O error '+cstrr(lo(erno)*1.0,16);
-    2:i1:='Run-time error '+cstrr(lo(erno)*1.0,16);
-  end;
-  rl:=eradr*1.0; if rl<0 then rl:=rl+65536.0;
-  i1:=i1+', PC='+cstrr(rl,16);
-  writeln(i1);
-  assign(f,'gfiles\errors.msg');
-  {$I-} append(f); {$I+}
-  if ioresult<>0 then
-    rewrite(f);
-  writeln(f); writeln(f,dat); writeln(f,i1);
-  close(f);
-  halt(2);
-end;
-
 procedure savesystat;
 begin
   reset(systatf); write(systatf,systat); close(systatf);
 end;
 
-procedure pfl(fn:str; var abort:boolean; cr:boolean);
+procedure pfl(fn:astr; var abort:boolean; cr:boolean);
 var fil:text;
-    i:str;
+    i:astr;
     next:boolean;
 begin
     if not hangup then begin
@@ -1468,10 +1709,46 @@ begin
     end;
 end;
 
-procedure printfile(fn:str);
+procedure printfile(fn:astr);
 var abort:boolean;
 begin
   pfl(fn,abort,true);
 end;
 
-
+procedure print_file (fn:astr);
+Var  fil:Text; i:char; abort,next:boolean; c:Integer; r:registers;
+begin
+ if not hangup then begin
+   assign(fil,fn);
+   {$I-} reset(fil); {$I+}
+   if ioresult<>0 then print('File not found.') else begin
+     abort:=false;
+     while ((not eof(fil)) and (not abort) and (not hangup)) do begin
+       checkhangup;
+       if (not empty) then wkey(abort,next);
+       read(fil,i);
+          If outcom then o1(i);
+          With r Do Begin
+             DX := Ord(i);
+             AX := $0200;
+             MsDos (r);
+          End;
+     end;
+     close(fil);
+   end;
+   nl;nl;
+ end;
+ topscr;
+end;
+
+procedure printf(fn:astr);      (* See if an *.ans file is available *)
+var fil:text;                  (* if you have ansi graphics invoked *)
+begin
+  if okansi then begin
+    assign(fil,fn+'.ans');
+    {$I-} reset(fil); {$I+}
+    if ioresult<>0 then nofile:=true else begin nofile:=false; close(fil); end;
+    if nofile then printfile(fn+'.msg') else print_file(fn+'.ans');
+  end else printfile(fn+'.msg');
+end;
+end.
