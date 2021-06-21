@@ -1,0 +1,10 @@
+
+: Dos Functions :
+
+ CD        - Change Directory           DEL       - Delete File
+ REN       - Rename File                DIR       - List Files
+ COPY      - Copy File                  TYPE      - Type File
+ EDIT      - Edit A File                GFILE     - G-file Edit
+ CLS       - Clear Screen               VOTEPRINT - Print Out Votes
+ LOADHELP  - Load Help File             QUIT      - Quit Mini-Dos
+ XDIR      - Extended Dir Listing

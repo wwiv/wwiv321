@@ -1,0 +1,15 @@
+
+: Co-Sysop Functions :
+
+IVOTES     -  Edit Voting Questions    !           - Validate Users
+LOG        -  Print Today's Sysop Log  DOS         - Mini-Dos
+YLOG       -  Print Yesterday's Log    UEDIT       - User Edit
+ZLOG       -  Print Out System Log     TEDIT       - Textfile Edit
+STATUS     -  Print System Status      OLDUSERS    - Sort Oldusers
+
+: Sysop Functions :
+
+BOARDEDIT   - Edit sub-boards          MAILR       - Read all mail sent
+DLBOARDEDIT - Edit directories         QUIT        - Abort the BBS
+CHAINS      - Edit chain files         CHUSER      - Change to a user
+

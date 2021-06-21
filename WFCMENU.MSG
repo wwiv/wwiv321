@@ -1,0 +1,8 @@
+: WFC MENU :
+
+ :Log On            A:Answer Phone      B:Board Edit        C:Change Chains
+D:DL Board Edit     E:Edit Text File    F:dos routines      G:G-File Edit
+I:Init Votes        L:Daily Log         M:Read Mail         P:Password Change
+Q:Quit BBS          R:Read Feedback     S:Status            T:Terminal
+V:Validate Users    Y:Yesterday's Log   Z:Zlog              =:Seclev Change
+

@@ -1,0 +1,1185 @@
+
+                                WWIV v3.21d
+                     Copyright (C) 1986 by Wayne Bell
+
+
+NECESSARY EQUIPMENT:
+====================
+
+IBM-PC,XT,AT or compatible
+256K or more of memory
+one hard disk (preferably 10 megs or more)
+Turbo Pascal compiler version 3.0
+A Hayes Smartmodem or compatible.
+
+
+DISTRIBUTION:
+=============
+
+You've  probably  read  this  a  million  times  before, but I'll type it in
+anyway.
+
+You may freely distribute this software, as long as:
+  1) No fee is charged for such distribution.
+  2) The entire system is distributed as a whole, without modifications.
+
+Of course, once you have a copy, you are encouraged to make whatever changes
+you feel  are necessary  or appropriate,  such as changing prompts, or other
+cosmetic changes.  If you feel brave enough, you might even try changing the
+logic of  the program,  but you  should refrain  from this unless you really
+know what you are doing.
+
+
+DONATIONS:
+==========
+
+If you find  this  program  useful,  a  donation  of  $25  would  be greatly
+appreciated.   Also, I  would be interested in knowing what WWIV systems are
+up, and any  suggestions  or  possible  modifications  you  might  think of.
+Please address any correspondences/donations to:
+
+               Wayne Bell
+               Box 636
+               904 Silver Spur Road
+               Rolling Hills Estates, CA  90274
+
+
+
+INTRODUCTION:
+=============
+
+This is  not meant  to be  a comprehensive manual, but is only an outline of
+the less-obvious functions.  This is  because I  don't feel  like typing 100
+pages of  a manual,  and also because I am sure you will discover more about
+the system from playing around with it yourself than you would by my telling
+you.
+
+Version 3.21  has been  tested out  pretty thoroughly,  and no  way has been
+found that remote callers can cause any harm to the computer itself,  or any
+data outside  the BBS.   If  you give  other people  high access, it will be
+possible for them to erase data  from the  BBS (ie,  messages and  files for
+downloading), but  there is NO WAY they can, say, destroy WordStar documents
+you have in a different directory.
+
+If you have any  questions or  problems with  WWIV (or  if you  just want to
+call), you can call the original WWIV at 213-208-6689.
+
+
+INSTALLATION:
+============
+
+You should skim through the entire installation section before beginning.
+
+On your  hard disk, create a directory (such as BBS) that is a sub-directory
+of the root directory.  Now, copy all the board  files into  that directory.
+Also copy  the Turbo  Pascal compiler  into this  directory.  You should now
+have the following files in your BBS directory:
+
+
+BBS.PAS
+COMMON.PAS
+CONVERT.PAS
+DLMENU.MSG
+DLOADS.PAS
+DLP1.PAS
+DLP2.PAS
+DOS.PAS
+DOSMNU.MSG
+DOSP1.PAS
+HELP.MSG
+INIT.PAS
+MAINMENU.MSG
+PART1.PAS
+PART2.PAS
+PART3.PAS
+PARTX.PAS
+SECLEV.DAT
+SKELETON.PAS
+SYSOPMNU.MSG
+WFCMENU.MSG
+WWIV321D.DOC
+TURBO.COM
+TURBO.MSG
+
+
+You should now enter the turbo  pascal compiler,  and run  "INIT.PAS".  This
+program will  initialize the  necessary BBS files and directories.  You will
+be asked which com port (1 or 2) your modem  is hooked  up to,  and what its
+maximum speed  of operation  is.  For example, if you have a Smartmodem 1200
+hooked up to COM1:, you are using com port 1 and your modem speed is 1200.
+
+You now need to compile to disk the main BBS program.   To do  this, compile
+BBS.PAS to  a .COM  file, then compile DLOADS.PAS and DOS.PAS to .CHN files.
+The following keystroaks will do this for you:
+
+TURBO
+NRINIT          This runs the initialization program (about 1300 lines).
+(com port number)
+(modem speed)
+MBBS
+OCQC            This will compile about 5200 lines of the main program.
+MDLOADS
+OHQC            This compiles about 3200 lines of the file system.
+MDOS
+OHQC            This compiles about 3900 lines of the dos routines.
+Q
+
+
+
+CUSTOMIZATION: There are a  few files  that you  will want  to customize for
+your needs.   These  files are  in the  sub-directory GFILES of the main BBS
+directory.  They are:
+
+SYSTEM.MSG -  This  file  should  contain  system  rules  and  other general
+information.
+
+NEWUSER.MSG -  This file  should tell new users what information they should
+leave to the sysop.
+
+WELCOME.MSG - This is the file  printed out  right after  a person connects,
+and should list the system name.
+
+LOGON.MSG -  This file  is printed out after each person logs on, and should
+contain any recent system information or updates.
+
+LOGOFF.MSG - This file is printed out after people log off, and  may contain
+the phone numbers of other BBS's.
+
+NONEWUSER.MSG - File listed out when "NEW" is typed for a CLOSED system.
+
+FEEDBACK.MSG -  This is  the file that is printed out just before a new user
+sends validation feedback to the sysop.  In this file,  you should  tell the
+new user what data he should give in his feedback.
+
+TRASHCAN.TXT -  This is where you put the names of users who you do not want
+to log on to your BBS.  For example, if you don't want anyone  with "THE" in
+their name (ie, "THE HACKER", etc), just put "THE" on a separate line in the
+file.  This will restrict anyone with "THE"  (as a  DISTINCT WORD)  in their
+name from logging on.
+
+These files  may be changed by using the built-in text editor, which will be
+described later.
+
+The next step in initialization is logging on the sysop.   Run  the main BBS
+program by typing BBS at the DOS prompt.  The modem will be initialized, and
+a few files read into memory, and you will be presented with a blank screen.
+Hit the  spacebar and the "Y" key.  You will now see the welcome message and
+the NN: prompt.   Type  in  "NEW"  and  hit  enter.    Enter  the applicable
+information for  the sysop  account now.   After verifying the password, the
+sysop will be logged onto the system.  You now need to  change the account's
+attributes to  sysop access.   to do this, hit F1 and type in "255" <enter>,
+then hit F2 and hit "V", then hit  Shift-F1 and  enter "255".   Now  log off
+with "/O".   After  logging off, the screen will again be blank.  The system
+is now waiting for a caller.  This condition will henceforth be  referred to
+as "WFC", "Waiting For Caller."
+
+Now you will need to change the system password.  At WFC, hit "P".  You will
+be prompted "PW?".  Here  you  need  to  enter  the  system  password, which
+defaults to "SYSOP".  After you enter that, you will be presented with seven
+options to change.  Right now you want to just  change the  system password,
+so hit  "A" and  enter the new system password.  You will need to enter this
+password when logging on remotely, or to enter certain portions  of the BBS.
+After entering  it, you  will be asked if this is correct.  If so, enter "Y"
+for yes, then "Q" to quit.  Whenever you see the "PW?" prompt, it  will mean
+you should enter the system password.
+
+
+BOARD DATA:
+
+Your next  task is  to identify  what boards  (message bases) you will want.
+Before entering the board  data into  the computer,  you will  want to write
+down  the  board  names  that  you  will  want,  such  as:  GENERAL, MARKET,
+DISCUSSIONS, COMPUTERS, etc.  You may have up to 19 boards.  For each board,
+you will  need: a  name, a  filename, the  maximum number of messages, and a
+security level requirement, which  limits  the  number  of  people  who have
+access to that board.  
+
+After writing  this down,  you will  have to enter it into the computer.  At
+WFC, hit "B" for  board data  change.   You will  have to  enter your system
+password here.   The system automatically initializes one board for you, but
+you will most likely  want more.   To  add more  boards, hit  "I" for insert
+board.   There is  only one board now, so you will insert it before board #2
+(which will place it after board #1).  You will be returned  to the previous
+display, but there will be two boards listed.  The data for the second board
+will be incorrect, so you will need to modify it, using the "M" command.  So
+hit "M",  enter board #2, and you will see 9 options listed.  If you want to
+change the Name, hit "1", and type in the new name.  The filename  is a very
+important  part  here.    Each  board  >MUST<  have a different filename (no
+extension).   The maximum  number of  messages should  vary from  20 to 100,
+although you  may specify more than 100 messages.  The SL option should vary
+from 10 to around 60 or 70.  SL will be discussed more later.  
+
+The post SL differs from the  regular SL  in this  way: the  post SL  is the
+security level required to be able to POST on the board, and the regular (or
+read) SL is the  SL you  need to  be able  to see  or read  messages off the
+board.  Hit "Q" to quit out of the modify routine.
+
+(Later, if  you want  to delete  a board, first remove all messages from the
+board, then delete it using the D option here).
+
+After quitting out of the board  edit routine,  you should  hit "D"  at WFC.
+After entering  your system  password, you  will be presented with a list of
+directories.  These are different areas for up and downloading  files.  This
+routine works the same as the board edit routine.
+
+That should pretty much finish off initialization, and the board is ready to
+run!
+
+
+
+CONVERSION
+==========
+
+If you have an older version of WWIV (ie, 3.11b  or earlier),  you will need
+to convert  some of  your files to work for version 3.21.  Fortunately, this
+is easy.  Just run the Turbo Pascal  compiler, compile  (to memory)  and run
+the "CONVERT.PAS"  program.  It will prompt you for your com port number and
+modem speed, which you should enter.   It  will then  reformat the necessary
+files for  you.   After you run the conversion program, just re-compile BBS,
+DLOADS, and DOS to the appropriate files (.COM, .CHN, and .CHN).  Additional
+information (ie,  whether they  support ANSI graphics, etc) will be asked of
+your old users the first time they log on.   That is  all that  is necessary
+for conversion.
+
+
+
+WFC COMMANDS:
+=============
+
+The  WFC  commands  are:  Q,B,D,P,A,S,L,Y,Z,M,R,T,V,F,E,G,C,=,<SPACE>.  They
+will be discussed in that order.
+
+Q: Quits out of the BBS, and exits to DOS.
+
+B: Board edit routine, described above.
+
+D: Directory edit routine, much the same as board edit.
+
+P: Password change, described above.
+
+A: Answers the phone.  This just tells the modem to answer the phone.  So if
+you are  talking to someone on the phone and he wants to connect to the BBS,
+hit "A", and he can log on.  After the phone has been answered,  you may hit
+"H" to hang it up before a connection is made.
+
+S: Status.  This will print out the current status of the board.
+
+L: Log-of-the-day.   This will show you who logged on so far today, and what
+they did while on.
+
+Y: Yesterday's log.  It will show the log-of-the-day for yesterday.
+
+Z: Zlog.  This will display certain daily statistics for the board  over the
+past few weeks.
+
+M: Mail  read.   This will  display >ALL<  mail sent, starting with the most
+recent piece.  After each piece of mail, the system will pause.  You can hit
+"Q" to  quit back  to WFC, "R" for re-read, "D" to delete the piece of mail,
+or any other key for the next piece of mail.
+
+R: Read feedback.  Hitting "R"  is the  same as  logging on  under the sysop
+account, reading  feedback, then  logging off.  This function is provided to
+save the trouble of logging on each time you want to just read feedback.
+
+T: Terminal mode.  While running a BBS, you may feel the urge to  call other
+BBS's.   Hit "T"  at WFC  to access the internal terminal program.  When you
+enter terminal mode, the computer sets up the  modem to  respond with result
+codes, and  sets the keyboard to uppercase.  A list of commands is available
+by hitting the "HOME"  key on  the numeric  keypad.   If you  wish to upload
+files from  the terminal,  they must be present in the dloads directory, and
+downloaded files will be put in the dloads directory.
+
+V: Validate  users.   Using this  utility, you  can page  through the users,
+delete users,  and change  data on  them.   It will start out with the sysop
+account, display the information, and prompt you for an option.  You can hit
+"?" for  a list of commands.  The line of data for messages lists: number of
+Posts, number of E-mail, number of Feedback, and the number waiting.  Logged
+on lists:  the number  of times logged on, number of times today, and number
+of illegal log-ons.  DS sec lev lists the Transfer security level, number of
+files uploaded, number of K uploaded, number of files downloaded, and number
+of K downloaded.  Options are:
+     S - change security level
+     A - change access (restrictions)
+     [ - go to user number one lower than current
+     ] - go to user number one higher than current
+     O - change search options
+     { - search down
+     } - search up
+     U - go to user, by name or number
+     D - Delete the user
+     R - Restore the user if he is deleted
+     N - Change name/alias
+     P - change phone number
+     E - change real user name
+     Q - Quit back to WFC
+     L - alert sysop when user logs on
+     T - change DL security level
+     C - change computer type
+     G - change age
+     F - one line note about user
+     B - board access for user
+
+F: This is the dos routine.  You will be in a sort of  "min-dos", which will
+enable you  to manipulate  files.   Any files  can be  manipulated, with the
+exception of files used by the bbs, such as the  user list,  board data, and
+other  related  files.    Only  three directories may be accessed, "DLOADS",
+"GFILES", and ".".  "." refers to the main BBS directory, and  the other two
+refer to  the sub-directories of the BBS directory with the same name.  When
+refering to the different directories, you  do  not  need  to  specify their
+actual position  in the  directory tree, only the name.  The commands may be
+used as if it  were  from  dos.    Examples  of  valid  commands  are: "COPY
+DLOADS\SOMEFILE.TXT",  "TYPE   .\BBS.PAS",  "COPY   LOGON.MSG  DLOADS"  (the
+backslash after "DLOADS" is optional).  Valid commands are:
+ 
+CD - Change the active directory.
+DEL - Delete file.
+REN - Rename file.
+DIR - List files.  Only .TXT or .MSG files will be listed, unless you
+     specify "*.*" or other such global names.
+XDIR - same as DIR, only a full directory listing is presented (ie, file
+     dates + times, lengths, etc)
+COPY - Copy file.
+TYPE - Type file.
+EDIT - Edit a file.  Invoked as "EDIT LOGON.MSG."  A description of the text
+     editor follows.
+GFILE - Gfile edit.
+CLS - clears screen.
+VOTEPRINT - Print out votes.
+LOADHELP - If you have edited the help file, "HELP.MSG", this will
+     re-load it into memory, so your changes will take effect.
+QUIT - Quit Mini-DOS.
+
+
+E: Edit.  This is the same as typing "F" for the  dos routines,  then typing
+"EDIT" followed by a filename, except this will prompt you for the filename.
+This option is provided only for convenience.
+
+G: G-file edit.  This is the same  as entering  the dos  routines and typing
+"GFILE".
+
+
+C: Chain-file  edit routine.   This  is sort of like the board-edit routine,
+except it allows you to add additional routines to the BBS.  If you  want to
+write your  own routine  to the  BBS (for example, a casino or user fight or
+other such thing), you will have to do it in the format  of the  rest of the
+BBS.   A "SKELETON.PAS"  program is  provided.  You should copy this file to
+your own (ie, CASINO.PAS),  and put  in your  own routines  where they would
+normally go in a Turbo-Pascal program.  To have your program work correctly,
+it must use standard I/O routines (such as the print and input routines used
+throughout the  BBS), and  have hangup an exit condition for all loops which
+do I/O to the user, as well as many other things, which  won't be documented
+here.   If you feel confident enough with the style of the BBS, go ahead and
+write your own add-on program, and  feel  free  to  distribute  it  to other
+SysOps.   There will  be more data on writing your own chn files later on in
+the documentation.
+
+=: Security  level data  change.   For each  security level  (sl), there are
+assigned attributes, telling what a user with that sl is able to do.  The SL
+data change routine (=) lets you change that  data.   Normally, you probably
+won't  ever  need  to  use  this,  and you probably shouldn't at first.  If,
+however, later on you feel a need to change this data, this is how.
+
+ : hit spacebar then "Y" to log on from the keyboard.
+
+
+
+TEXT EDITOR:
+===========
+
+The text editor is available from the dos routine, and  may ONLY  edit files
+with .MSG  or .TXT  extensions.  After entering the editor, the file will be
+read in, or you will be told that it is a new file.  For long files, not all
+of the  file may  be read  in.   The text editor is line oriented, and has a
+command list on line.  At the ":" prompt hit "?" for a list of commands.   A
+number may  be specified  with most commands, such as "+15" to go forward 15
+lines, or "15" to go to line #15.
+
+
+SECURITY LEVELS:
+================
+
+Each user is assigned, by the sysop, a security level.  This determines what
+the user  can and can not do on the system.  New users are given a 10, which
+doesn't allow them to do much at all.  Validated users should be given about
+a 30.
+
+Board access:  If the user's security level is less than the SL for a board,
+the user cannot access the board.
+
+In general, a user's SL should vary between 30 and 100.   If the  user has a
+100, he  is able  to do  anything the  sysop is able to do.  There is a time
+limit for each user, which is  generally 10  minutes less  than the security
+level itself, so a user with a SL of 30 can stay on for 20 minutes.  Special
+security levels:
+
+     70 and above: can post anonymously on any board
+     80 and above: can send anonymous mail
+     90 and above: can read names on anonymous messages
+     95 and above: can read names on anonymous mail
+     99: this will allow the user to validate and delete messages on the
+          board number specified by the SBN for that user.  If the SBN is
+          zero, the user can validate and delete messages on any board.
+     100: The user can do virtually anything the sysop can, with 3
+          exceptions, listed later.
+     255: The sysop.  Can do anything.
+
+(The above  list is  the default.   Using  the "="  command at  WFC, you can
+change this data.)
+
+The download,  or transfer,  security level  is much the same as the regular
+security level, except it is used for access to different directories in the
+file system.
+
+
+ACCESS/RESTRICTIONS:
+====================
+
+Each user  has a  set of  restrictions that  can be  used against  him.  For
+"good" users, none of these should be enacted.  They are:
+
+  L - restrict logons to 1/day 
+  C - restrict from chatting 
+  V - make messages unvalidated 
+  B - restrict from back/downspacing 
+  A - restrict from changing auto- 
+      message and adding to BBS list 
+  * - restrict from posting anon msgs 
+  P - restrict from posting at all 
+  E - restrict from sending e-mail 
+  K - restrict from voting 
+  M - auto-message deletion 
+
+
+Board access (abbreviated "AR"  in the  BBS, for  "access required")  can be
+used to  limit access  for certain  subboards on your BBS.  If, for example,
+you want to have a sub-board exclusively for IBM users,  you can  set the AR
+for the IBM sub to be "A".  Then, for each user you want to allow access to,
+you would set the "A" flag in that user's AR.
+
+
+TOP OF THE SCREEN DATA:
+=======================
+
+While any user is logged on, there will be information on that  user printed
+on  the  top  of  your  screen.    The remote user will not be aware of this
+information.  There are three lines of information.
+
+The first line contains: the user's  name,  user  number,  real  name, phone
+number, and either: last date logged on, or number of times logged on today.
+
+The second line contains:
+     SL: security level
+     AR: board access; 
+     LO: number of times logged on
+     P : number of messages posted
+     E : number of pieces of mail sent
+     F : number of pieces of feedback sent
+     W : number of pieces of mail waiting for him to receive
+     SC: screen size (ie, 80X25).  Before a user is logged on, this
+          area will show his/her password
+     FW: number of pieces of mail waiting for user #1
+     D : download/transfer SL
+
+The third line contains:
+     AC: access/restrictions (if any)
+     C : computer type
+     ML: messages left before forced logoff.  This will only show for
+          users who have been on more than one time that day
+     TL: time left, in minutes
+The next  area shows  "Sysop Available"  or "-----  ---------".  If it shows
+"sysop available", the user is able to request  a chat.   After  this, there
+will be: nothing, or "CHAT ON", which means the user has requested a chat.
+
+
+
+SYSOP KEYS:
+===========
+
+While  someone  is  logged  on  the  system  (remotely  or from the computer
+itself), the function keys can be used for special commands.  These are:
+
+F1: change the user's security level.
+
+Shift-F1: change the user's download security level.
+
+F2 - change the user's access/restrictions.
+
+Shift-F2: change board access for a user.
+
+F3 - disable remote keyboard.   This  is  used  mainly  if  you  want  to do
+something on the system without the remote user interfering.
+
+F4 - turn off the chat call if it is on.
+
+F5 - hang up on the user - this is the same as if the user hung up.
+
+F6 - update time left, and hang up on the user if his time is expired.
+
+F7 -  decrease time  left by  5 minutes.   If you are annoyed at a user, and
+want him/her off the system sooner, hit f7 one or more times.   You  can hit
+it enough  that the time left will be negative, but the system won't hang up
+yet.  You have to hit F6 to have it hang up.
+
+F8 - increase time left by 5 minutes.
+
+Shift-F7 - decrease number of messages allowed by 10.
+
+Shift-F8 - increase number of messages allowed by 10.
+
+F9 - give >TEMPORARY< sysop access.  After the user hangs up, his SL will be
+returned to  what it  was before.   If you don't want to wait until he hangs
+up, hit F9 again, and his  SL will  be restored  then.   NOTE: You shouldn't
+walk away from the computer after giving someone temporary sysop access.
+
+F10 - chat mode.  If you want to type to a user, hit F10.  When you are done
+chatting, hit F10 again, and the user  will  be  returned  to  where  he was
+before.   While in  chat mode, you may use all the other function keys also.
+In chat mode, you may store what is being said.  Just hit <home>  (with num-
+lock off),  and every line that is typed will be stored in "CHAT.MSG" in the
+GFILES directory.  To stop storing the lines, hit <home> again, or just exit
+chat mode with F10.
+
+Shift-F10 -  This will  toggle the sysop anounce.  It will be displayed as a
+"(-*-)" in the upper-right corner of the top of screen  data.   When this is
+activated,  the  computer  will  beep  for one minute after the current user
+loggs off.  You can hit any key to stop the beeping.  This is meant to allow
+you to use the computer without too much inconveniencing the users.
+
+Scroll-lock - toggles sysop available.  
+
+
+
+MAIN MENU SYSOP COMMANDS:
+=========================
+
+There are  a few sysop commands at the main menu.  If they are more than one
+character long (as most of them  are), and  you have  one key  input on, you
+must precede  them with  "//", which  will enable  you to type a whole line.
+For example, if you  want to  enter uedit,  you would  type "//UEDIT".   The
+sysop commands  (which may  be used  by anyone  with a SL of 100 or greater)
+are: 
+
+! - Validate users 
+UEDIT - user edit procedure 
+STATUS - print system status 
+IVOTES - initialize voting data 
+LOG - print today's sysop log 
+YLOG - print yesterday's sysop log 
+TEDIT - edit a text file
+OLDUSERS - list out users in order of number of days since last logon
+DOS - enter the dos routine.  Users  with SL's  less than  255 (100-254) may
+only access  the DLOADS  and GFILES  directory, and within those, only files
+with .TXT or .MSG extensions.
+
+ 
+All of these have either been described or should be  self-evident.   A list
+of these commands is also available to the sysop from the main menu.  Simply
+type "/?" at the main menu and the above list,  along with  some other data,
+will be printed out.
+
+There are  four other  main menu sysop commands, which are only available to
+users with a SL of 255.  They are: BOARDEDIT, DLBOARDEDIT, MAILR,  and QUIT.
+BOARDEDIT and  DLBOARDEDIT are  the same  as B and D from WFC.  MAILR is the
+same as M from WFC.  QUIT returns to dos, the same as a  Q from  WFC, except
+an errorlevel  of 1  is returned.   This is not very useful, except for non-
+standard setups. These commands  are not  listed in  any menu,  and are only
+meant for use by the sysop if he needs to run the entire board remotely.
+
+
+
+HIDDEN SYSOP COMMANDS:
+======================
+
+There are a few sysop commands which are not listed anywhere.  They are:
+
+Validate user:  After reading  a piece  of mail or posted message, the sysop
+can hit "V" at the prompt, and change the SL or restrictions  for that user.
+This is  useful for  validating new  users, and  restricting people who have
+abused privileges.
+
+Remove messages: using the  R main  menu command,  the sysop  can remove any
+message on a board.  Also, in the scan routine, the sysop can hit "D" at the
+prompt, which will delete the last message read.
+
+At the message read prompt, the sysop may type "M" to move  the last message
+read to another board.
+
+
+TRANSFER SECTION SYSOP COMMANDS:
+================================
+
+There are  also a  few sysop  commands in the file system, which work pretty
+much like the ones at the main menu.  They are:
+
+M - Move a file from one directory to another.  You enter the filename, then
+the destination directory number.
+
+SORT - Sort files by filename or date uploaded.
+
+REN - Rename file and/or description of file.
+
+0 - change to sysop directory.  Files uploaded with a backslash ("\") at the
+beginning of their description will be uploaded into  directory number zero.
+The sysop can then remove or move the files.
+
+Of  course,  files  can  not  be  downloaded when you are logged on from the
+keyboard, but they can be uploaded.  To do this, first exit to DOS  and copy
+the file  into the  DLOADS directory.   Then  run the BBS, log on, enter the
+file system, and upload the file as you normally would remotely.
+
+Files can also be uploaded remotely by the  sysop if  they already  exist in
+the DLOADS  directory.   This is  meant for  people who already have a large
+amount of software that they need to put in the  transfer section,  but need
+to do it remotely.
+
+Also, in  version 3.1A, users can up and download files from Apple computers
+if they want.
+
+
+HELP FILE:
+==========
+
+Version 3.21 has a special feature - on-line help.  At just  about any point
+in the  BBS (with the exception of sysop functions), you can hit ctrl-Z, and
+get semi-detailed help about whatever function  it is  you are  using at the
+time.   This is  especially useful  for new  users, so  you should have this
+function listed in your newuser file, or some other place so newusers can be
+aware of  it.  You may want to change the help file yourself, so this is how
+it is set up:
+
+All the help files are  stored  in  one  dos  file,  gfiles\help.msg.   Each
+seperate help file is stored as follows:
+
+|C description
+
+help file 
+.
+.
+.
+
+|D description
+
+help file 
+.
+.
+.
+
+Each file  is started  with a  vertical bar, followed by the character which
+identifies which help file it is.  The rest of the line is a  "comment", and
+is never  printed out.   It is to aid in editing the file only.  Because the
+vertical bar is a "reserved character", none of  the help  files may contain
+vertical bars.    
+
+The help  file is loaded into memory when the the board is initially run, to
+save on I/O, so if you edit the help file with the built-in text editor, you
+must re-load  the help file into memory, using the "LOADHELP" command in the
+DOS routine.
+
+
+
+FUTURE MODIFICATIONS:
+=====================
+
+It is  possible that  there are  a few  bugs in  the program,  and there are
+certainly more  things to  be added.  Future versions that are numbered 3.xx
+will be compatible with other version 3.xx's.
+
+
+
+
+CREDITS:
+========
+
+Although I did write most of the code myself, there  are quite  a few people
+who did  help, or  whose code got used.  The com routines are based on those
+by: Philib Burns, Alan Bishop, C. J. Dunford, and Michael  Quinlan, although
+they did get changed quite a bit.
+
+Tim Francisco  also helped  in the  development quite a bit, especially with
+testing the software.  Making sure the XMODEM and com routines work is quite
+difficult without another patient person to help.
+
+
+
+
+NOTES ON PROGRAM STRUCTURE
+==========================
+
+This  section  will  contain  a  description  of  the  major  procedures and
+functions in  COMMON.PAS.   This data  is mainly  meant to  assist people in
+writing chain files for WWIV.
+
+
+Types:
+
+str=string[160].   If you ever want to use string variables in the BBS or in
+a chain file, use them as type str.
+
+
+
+A few global variables:
+
+thisuser: holds all the data about the current user who is logged on.
+
+usernum:integer - user number of current user.
+
+hangup:boolean - goes TRUE if the  user hangs  up or  gets hung  up.  hangup
+>MUST<  be  an  exit  condition  of  any  loop doing I/O.  If it is not, the
+program will hang if the user hangs up during that loop.
+
+
+
+Now, for a description of some procedures (and functions) in  COMMON.PAS (in
+the order they appear):
+
+
+function freek(integer):integer
+
+You pass  an integer specifying a drive (0=default, 1=A:, 2=B:, etc), and it
+returns an integer telling how much free space there is on that  drive, in k
+(ie, freek(0)=1 means that there is 1k free on the default drive).
+
+
+function cs:boolean
+
+this is TRUE if the user has co-sysop access or higher, FALSE if not.  A co-
+sysop is someone who has a SL of 100 or greater, unless you change  it using
+the "=" command at WFC.
+
+
+function so:boolean
+
+This  is  TRUE  if  and  only  if  the  user  has a SL of 255 (this may be a
+temporary or permanent value, so if you hit F9, so will be TRUE).   If so is
+true then cs is also true.
+
+
+function lcs:boolean
+
+TRUE if the user has limited co-sysop powers or higher, allowing deletion or
+validation of messages on the current board.    this  isn't  used  much.   A
+person is a lcs if they have a 99 or greater.
+
+
+function okansi:boolean
+
+TRUE if the user has specified that he wants ANSI graphics.
+
+
+procedure dump
+
+clears the comm buffer.
+
+
+procedure term_ready(boolean)
+
+sets DTR  to whatever  value (T,F)  you pass it.  Term_ready(false) hangs up
+the phone line for most modems.  You would probably never need to use this.
+
+
+function cinkey1:char
+
+returns a character from the com port, if  any, or  chr(0) if  the buffer is
+empty.
+
+
+function cinkey:char
+
+almost same  as cinkey,  but this  stripps off  the high  bit if the user is
+logged on with parity.
+
+
+function timer:real
+
+returns number of seconds since midnight.  Used quite often  to time things,
+however you  must be  aware that  at midnight this goes from 86400.0 to 0.0.
+If your elapsed time  is less  than zero,  you should  add 86400  to get the
+actual value.
+
+
+function sysop:boolean
+
+TRUE if the sysop allows users to request a chat at the current time.
+
+
+procedure sl1(str)
+
+outputs a  line to  the sysop  log, all  the way to the left.  Only used for
+things such as users logging on or off.
+
+
+procedure sysoplog(str)
+
+This should be used if you want to output anything the user is doing  to the
+sysop  log,  such  as  syoplog('Changed  password');    This  is  indented 3
+characters from the left.
+
+
+function time:str
+function date:str
+
+These return strings of 8 characters each, and  you should  be able  to tell
+what they do.
+
+
+function value(str):integer
+
+use this for conversion of a string number to an integer variable.
+
+
+function cstr(integer):str
+
+use for conversion of integers to strings.
+
+
+function nam:str
+
+returns the  user's name, with letters converted to lowercase, with the user
+number on the end.  Ex: "Laison Al'Gaib #1"
+
+
+function daynum(str):integer
+
+pass a string to the function in the format "mm/dd/yy" (same as  returned by
+the date  function).  returns the number of days since jan 1, 1985.  Use for
+calculating  the  number  of   days  between   dates.     Commonly  used  is
+daynum(date).
+
+
+function dat:str
+
+returns the date spelled out in words, such as "6:57 pm  Sun Jan 11, 1987"
+
+
+procedure checkhangup
+
+checks to  see if  the user has hung up.  Should be called periodically, but
+is called by most I/O procedures, so you usually don't  have to  worry about
+it.
+
+
+procedure getkey(char)
+
+waits for  a key  to be  pressed.  Beeps after 1.5 minutes, hangs up after 3
+minutes if no key is pressed.
+
+
+procedure pr1(str)
+
+prints out a string to the modem, but NOT to the screen.  
+
+
+procedure pr(str)
+
+same as pr1, but this adds a c/r on the end.
+
+
+procedure ansic(integer)
+
+changes the current color to the integer passed, IF the user has ANSI option
+turned on.  If the user does not have ANSI on, this will do nothing.  So, no
+checking is needed if you call this.  The number  you pass  is in  the range
+[0..8].   a 0  or 1  resets to the default color.  2-8 are as defined in the
+change color  section of  the default  section.   The color  is re-set right
+before a c/r, so you usually don't have to reset it yourself.
+
+
+procedure prompt(str)
+
+prints someting  to the screen, no pause or abort checked for or allowed, no
+c/r on the end.
+
+
+procedure print(str)
+
+same as prompt, but adds cr/lf on the end.
+
+
+procedure nl
+
+outputs cr/lf sequence - "new line".
+
+
+procedure pausescr
+
+outputs (-*-) to the screen and waits for a key to be pressed.
+
+
+procedure prt(str)
+
+changes the current color  to  the  prompt  color  (whatever  that  user has
+defined as the prompt color in the default section), and outputs str.
+
+
+procedure ynq(str)
+
+changes the current color to y/n question color (which is set in the default
+seciton), outputs str.
+
+
+procedure mpl(integer)
+
+makes a prompt line  integer  characters  long  (reverse-video  color), then
+returns the cursor to the beginning of the prompt line.  For example, mpl(4)
+will make  a reverse  video "prompt  line" 4  characters long,  and move the
+cursor to the beginning of it.
+
+
+procedure tleft
+
+updates the time left, and sysop availability.  It also checks to see if the
+user's time is up, and hangs up if so.  This should be called periodically.
+
+
+procedure topscr
+
+Updates top of screen data.  Needs to be called only if some of  the data is
+changed.
+
+
+function inkey:char
+
+returns a  key, if  any is  pressed (comm or keyboard), or chr(0) if none is
+pressed.
+
+
+procedure cls
+
+clears screen
+
+
+function yn:boolean
+
+waits for a key to be pressed.  "Y" or "y" means yes, "N", "n", or  just c/r
+means no.  "Yes" or "No" is printed out, and a TRUE or FALSE value returned,
+TRUE if a "Y" was pressed, "N" otherwise.
+
+
+procedure input(str,integer)
+
+Inputs str as a  string, regular  input, uppercase  only, integer characters
+long maximum.   For example, input(5,i) will allow the user to enter up to 5
+characters.
+
+
+
+procedure inputl(str,integer)
+
+same as input, but allows lowercase.
+
+
+procedure onek(char,str)
+
+waits for one key to be pressed.  Converts to  uppercase.   Only allows keys
+that are in the string str.  So, if you want to get a key pressed, only a 1,
+2 or 3, you would do onek(c,'123');  This also prints out the key,  and does
+a cr/lf sequence after it.
+
+
+procedure printa(str,boolean,boolean)
+
+usually  called  as  printa(i,abort,next).    the  string  i is printed out,
+allowing for pauses or abort.  If the  message is  aborted, abort  is set to
+true.   if ctrl-n  is pressed,  next is  also true.  This procedure also re-
+formats the string to fit on the screen, wrapping words or not as necessary.
+This is  usually used  in a loop to print out a file or some other series of
+things.  An example of use would be
+
+j=1; abort:=false;
+while (j<9) and (not abort) do begin
+  printa(string[j],abort,next);
+  j:=j+1;
+end;
+
+
+procedure printacr(str,boolean,boolean)
+
+same as printa, except it does a mandatory c/r at the end of the line.
+
+
+procedure printfile(str)
+
+prints out the file str, allowing pauses and aborts.  You must  also specify
+directories, if necessary, such as printfile('gfiles\mainmenu.msg');
+
+
+
+COMMENTS:
+
+For printing out data (using print or printa), you must convert all parts of
+the output into ONE  STRING.   You can  not output  numeric and  string data
+separately, as  in normal  pascal or basic.  Instead, you convert the entire
+thing into one string.  Say, for example,  you want  to print  out something
+like "I  found 5  objects", except  num is an integer specifying the number.
+The string would be made like this:
+
+'I found '+cstr(num)+' objects.'
+
+To output that, you would say:
+
+print('I found '+cstr(num)+' objects.');
+
+
+Another thing is how ANSI graphics is stored in files  (such as  messages or
+menus).  The message editor and file editor allow you to change the color by
+hitting ^P followed by a number 0-8 (same as passed through ansic()).   This
+generates  two  bytes  in  the  file  or line, which are not counted for the
+length of the line  or for  wordwrap or  anything like  that (ie,  they have
+effective length zero).
+
+They are  stored as  a chr(3) followed by a chr(0-8).  If you want to edit a
+message or menu using the Turbo Pascal editor, they will show generally as a
+C (low  intensity, signifying  ^C=chr(3)) followed  by another low intensity
+character, A-H.  If you would like to type in  to change  them to  color #4,
+you would  type ^P^C^P^D.  The ^P's are to tell the editor you want the next
+character exactly as you type it.  I  don't think  chr(0) shows  up (but I'm
+not sure), so use a chr(1) instead (since they do the same thing).
+
+NOTE: the  Turbo editor  seems to have problems replacing control characters
+(ie, using global repalce [^Q^A]).  I don't  remember exactly  how it works,
+but you should be aware of this.
+
+These  color  codes  are  only  converted  to the ANSI codes, however in the
+printa procedure.  The printa procedure is called from the print message and
+file routines,  so that  works out  fine, however  if you  try putting these
+codes in a regular print() call, it won't work.  Also, embedding normal ANSI
+codes in  a file will give unpredictable results.  It will change the remote
+user's screen to the right color,  but it  will come  out as  garbage on the
+syosp's side, and the BBS will attempt to wrap the lines where it would need
+to on the sysop's side, which won't be the right place for  the remote user.
+It doesn't  send things  through normal DOS calls (which would interpret the
+ANSI correctly) for two main reasons: 1) it would mess up the  top of screen
+data, since  DOS ignores  any windows  defined, and 2) the BBS wouldn't know
+where to wrap the words or if it  has to  change the  color back  to normal.
+DOS also  wouldn't use the user's defined colors, and it also wouldn't strip
+them out if the user doesn't want ANSI.
+
+
+
+DIFFERENT FILES
+===============
+
+COMMON.PAS: Previously described.  Holds most of the low-level procedures.
+
+BBS.PAS: Contains most of the major logic for the BBS.
+
+PART1.PAS: Contains procedures to read and write messages.
+
+PART2.PAS: Contains most of the overlayed  procedures that  normal users can
+get at.
+
+PART3.PAS: Contains the overlayed procedures that the sysop or co-sysops can
+get at.
+
+PARTX.PAS:  This  group  of  overlay  procedures  are  mainly   called  from
+procedures in  part2 and part3.  These are in a different overlay file (they
+have to be in  order  to  be  called  from  the  other  overlay procedures).
+Setting up  things this  way makes  the code more obscure and slower to run,
+but it is necessary in order to make the BBS fit in the 64k limit imposed by
+Turbo Pascal and the .COM file structure.
+
+DOS.PAS: The main structure for the DOS modules.  Most of the procedures are
+in dosp1, however, in order to save memory.
+
+DOSP1.PAS: Contains the mini-dos procedures, as well as Uedit, Tedit,  and a
+few other things.
+
+DLOADS.PAS: Main part of the transfer section.
+
+DLP1.PAS:  contains  file  transfer  procedures.    This is also included in
+DOS.PAS, in order to enable the terminal program to transfer files.
+
+DLP2.PAS: Other overlayed routines for dloads.
+
+
+NOTE: The files partx, part2, part3,  dosp1, and  dlp2 contain  ONLY overlay
+procedures, and it is necessary to keep it that way.  dlp1 contains the send
+and receive file that are overlayed, but also some other procedures that are
+not overlay,  and shouldn't be.  But, in order to make it more logically set
+up (because they go along with the transfer routines), dlp1 has both overlay
+and non-overlay procedures.
+
+
+
+                                 "ADDENDUM"
+
+This doesn't  directly affect  the running  of a  BBS, just  a few thoughts I
+thought I'd add on.
+
+First, this will probably be the last update to WWIV for a  while.   I have a
+few more  thoughts to add on, but they are pretty major changes and will take
+a while.  I am also considering doing a total re-write of the BBS  when Turbo
+Pascal  4.0  comes  out  (allegedly  2nd  quarter  1987).  This will probably
+involve re-organization  of the  code, because  the current  version has been
+specially de-organized  in order  to fit into the 64k limit on .COM files.  I
+will probably also add in a  full-screen editor,  as well  as re-organizing a
+few functions  (such as adding the macro creation and password change options
+into the default sub-menu).
+
+Since this will  involve  pretty  much  starting  from  scratch,  I  would be
+interested  in  hearing  any  major  organizational ideas anyone may have out
+there.  Going along the same line, I'd also like  to hear  about other WWIV's
+in the  US.   I only know of a few that aren't in my local area, and I'd like
+to set up some kind of list of WWIV's.   So, even  if you  are too  stingy to
+send  in  the  $25,  I'd  still  like  to  hear about your BBS, and any other
+comments you might have.  The address (if you happened to miss it) is
+
+
+     Wayne Bell
+     Box 636
+     904 Silver Spur Road
+     Rolling Hills Estates, CA  90274
+
+The next topic I'd like to address is  about distribution  of modified copies
+of WWIV.   In the docs I say only to distribute un-modified copies, and there
+are even good reasons for  that.    I  have  heard  of  two  different people
+distributing modified copies, and both have encountered problems.  
+
+The first  one involved  the version having many bugs in it, and going by the
+name of "WWIV320C.ARC".  It really didn't work well at all, and I am dreading
+the day  when someone asks me about why it doesn't work, because it still has
+only my name on it.
+
+The second problem was with a modified copy of version  3.11b, I  believe.  I
+have only  heard of  this recently, when someone tried running the conversion
+routine in 3.21b.  It didn't work.   I  think  it  got  a  run-time  error or
+something, in  the middle  of conversion.  Needless to say, this isn't a good
+thing to have happen, because his  data files  will likely  not work  for any
+version now,  and he'll have to start his user list from scratch.  Of course,
+I got a call about it asking me what had gone wrong with it.  I  really don't
+like hearing about problems to my software that I didn't create.
+
+Another reason  to avoid  modified copies  is back doors.  WWIV does not have
+ANY back doors.   Many people  have searched  through the  code (and probably
+have had  heart attacks  when they  see what  it looks  like), but no one has
+found any.  I have no idea if anyone else might add one in  for you,  so it's
+best to watch out.
+
+This isn't  to say,  however, that  you shouldn't distribute additions to the
+BBS.  I've seen quite a few routines distributed for addition to the BBS, for
+things like  adding a  daily quote,  and checking a user's up/down load ratio
+before allowing the user to download a file.  All these have been in the form
+of "add this procedure here, and this statement to call it."  There's nothing
+wrong with that,  I'd  probably  even  encourage  people  to  do  that.   But
+distributing the complete BBS along with unknown changes should not be done.
+
+Chain files.   You've  probably seen  that .CHN  files can  be added on to do
+other  things,  such  as  games.    These  aren't  described  very  well, but
+nevertheless, I have seen a few floating around.  That is what the ability is
+there for.  I'd like to encourage people to write .CHN files,  and distribute
+them.  I am currently working on an adventure chain file, and in the future I
+may write some others.  I hope other people do also.
+
+Also, a few words about transfer  protocols.   WWIV supports  xmodem, xmodem-
+crc, and ymodem.  Most terminal programs that support ymodem will give a time
+estimation for the transfer.  For  example,  if  someone  is  u/l'ing  a file
+ymodem to the BBS, the sysop will be able to see how much longer it will take
+to complete the transfer.  Ymodem also sets the exact  file size,  as well as
+the file  date and  time.   Ymodem also  has larger block sizes, so transfers
+will go faster.  For these reasons, I believe that ymodem is the best  out of
+the  three  protocols,  and  users  should  be  encouraged  to use ymodem for
+transfers.
+
+                                        Wayne Bell
+
+

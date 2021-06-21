@@ -1,0 +1,530 @@
+|@ MAIN MENU HELP
+
+
+MESSAGE COMMANDS
+----------------
+
+S - Scan messages on the current board.  This command allows you to read the
+messages on the board you are currently on.  The current board name and number
+are shown on the main menu prompt.
+
+Q - Quickscan current board.  This will read the new messages on the current
+board.
+
+N - Newscan.  Newscan quickscans all the boards.
+
+P - Post.  This will allow you to post a message on the current board
+(validated users only)
+
+R - Remove.  This allows you to remove messages you have previously posted.
+
+* - Board list.  You will be given a list of boards you have access to.
+
+Number - Typing a number will change the current board to that board number.
+
+
+MAIL COMMANDS
+-------------
+
+C - Chat with the sysop.  This command turns on a sysop page, which may
+attract the attention of the sysop.
+
+F - Feedback.  This enables you to send a letter to the sysop personally.
+
+M - read Mail.  This lets you read mail addressed to you personally.
+
+E - E-mail.  You will be able to send mail to other users.  (validated users
+only)
+
+/E - E-mail to more than one user.  This will let you send the same piece
+of mail to up to 20 different people.  (validated users only)
+
+
+ACCOUNT COMMANDS
+----------------
+
+Y - Your info.  Information is displayed about your account.
+
+$ - Password change.
+
+X - eXpert mode.  This will toggle the display of the main menu.
+
+D - Default change.  This lets you set your screen size, wordwrap status,
+cursor, ANSI state, and the boards you want quickscanned in a N:ewscan.
+
+H - Macros.  There are two "macros", ctrl-D and ctrl-F.  Hitting those keys
+will make the BBS substitute a string of characters which you may specify.
+The "H" command lets you change/display those macros.
+
+K - Kill old E-mail.  If you send a piece of mail that you later decide you
+didn't actually want to send, you can delete it with this command.
+
+J - Purge.  This will print out all the messages you have posted on the
+current board and ask whether or not to delete them.  This is useful if you
+want to remove outdated messages.
+
+Z - Global purge.  This will purge all boards.
+
+
+BOARD COMMANDS
+--------------
+
+T - File system.  This lets you upload and download files.  (validated users
+only)
+
+W - Write auto-message.  This allows you to change the auto-message seen
+when users first log on.  (validated users only)
+
+V - Vote.  There are up to 9 questions that you may vote on (only validated
+users may vote)
+
+B - BBS list.  This will display the numbers of other BBS systems.
+
+A - Add to BBS list.  This enables you to add to the BBS list. (validated
+users only)
+
+G - G-files.  These are general-interest files that you may view.
+
+I - Info on system.  This will display the logon message and other
+information about the system.
+
+L - Log of the day.  This displays a list of users who logged on today.
+
+U - User list.  This shows a list of users of the system.
+
+O - Off the system.  This loggs you off.
+
+. - Other programs available.
+
+/O - Log off immediately.
+
+
+|A Add to BBS list.
+
+You may now add the phone number of a BBS to the system list.  You must
+enter the phone number in the form ###-###-####.  Then you must enter the
+name of the system, and any other information about it, such as operating
+hours.  After that, you will be asked for the maximum baud rate of the BBS.
+If you do not know what the maximum rate is, just hit return.  After you
+enter the system name, you will be asked for a 4 character system type,
+such as WWIV, RBBS, FIDO, TCAT, etc.
+
+|B Browse files.
+
+This function allows you to "browse" through the files available for
+download to decide which you want to download.  Valid commands are:
+
+L - List the next 10 files.
+Q - Quit back to the download main menu.
+U - Upload a file.
+D - Download a file by file number.
+# - Entering a number will download that file number.
+
+
+|C Chat.
+
+This command will page the sysop to come to the computer to chat with you.
+You must enter a reason for chatting, such as "VALIDATION" or some other
+meaningful reason.  The page will continue until you hang up or turn it off
+by hitting "C" at the main menu again.  If you do not wish to do this, just
+hit <ENTER> here.
+
+|D Defaults.
+
+Here you may change certain information about your terminal and the way you
+want the BBS to respond to you.  The options are:
+
+1. Screen size.  The screen width is usually 40 or 80, although some terminals
+use 32 or 64.  This information is used to format messages for your screen
+size.  The number of lines on your display is also asked for.
+
+2. Input.  This allows you to set whether or not you wish to have "one
+key input," where you do not have to hit enter where only one character
+is required as input.
+
+3. Wordwrap.  This lets you turn off wordwrap if you want to.  Unless you
+have some good reason to, you should leave wordwrap on.
+
+4. ANSI graphics.  If your terminal supports ANSI graphics, you should
+have this option set ON.  It will allow the BBS to change the color of
+text on your screen and move the cursor around more efficiently.
+
+5. Color display.  If you have a color monitor, this should be set ON.
+When color AND ANSI graphics are set on, the BBS will change the color of
+text to be more meaningful.
+
+6. Pause on screen.  If you are using a high-speed modem, some information
+may scroll off the screen faster than you can read it.  You may use ctrl-S
+or "P" to pause the screen, but it might be easier to use this option.  If
+the pause is set on, the BBS will pause when your screen is full of
+information, wait for you to hit a key, then resume.
+
+7. Mailbox.  If, for some reason, you do not wish to receive mail from other
+users, you may "close" your mailbox.  You also have the option of having
+your mail forwarded to another user.  For example, if you will be on
+vacation you may want your mail forwarded.
+
+8. Configured Q-scan.  This lets you identify which boards you want to
+Q-scan in a N:ewscan.
+
+9. Colors.  If you have  the ANSI graphics option set on, you will be able
+to set which colors you would like displayed for prompts, questions, etc.
+
+
+|E Multi-Mail.
+
+This feature enables you to send the same piece of mail to up to 20 different
+users.  You may want to do this if you are, say, notifying people of an
+upcoming meeting.
+
+You must first tell the system the user numbers of the people you wish to send
+this piece of mail to.  Enter them, all on the same line, separated by commas.
+If you do not wish to do this, just hit <ENTER> at the prompt.
+
+You will then be presented with a list of the users, listing their names and
+numbers, and asked if this is correct.  If so, hit "Y".
+
+After that, you will enter the message to be sent.
+
+
+|F Write message.
+
+After entering the title for the message, you will enter the actual text of
+the message.  While writing, or after you have finished, there are several
+"slash commands" that you may use.  They are:
+
+/es - This saves the message.
+/ex - This allows you to edit what you have entered so far.
+/abt - This aborts the message, and nothing is saved.
+/clr - This clears the message and allows you to start over.
+/li - This lists what you have entered so far, optionally with line numbers.
+/rl - This lets you replace the last line you have entered.  Essentially, it
+deletes the last line you have typed.
+/c: - this centers a line on the screen.
+/t: - this boxes and centeres a line you enter.
+/su/str1/str2/ - this substitutes str1 in the previous line with str2
+
+examples of centering and boxing.
+
+/c:this is centered
+you get:
+this is centered
+
+/t: this is boxed
+you get:
++---------------+
+! this is boxed !
++---------------+
+
+
+example of substitution.  If you type:
+
+this is some text i am typing.
+/su/some/a lot of/
+
+you will get:
+
+this is a lot of text i am typing.
+
+for your previous line.
+
+Ctrl- keys: The following control keys are available:
+Ctrl-F - Ctrl-F macro
+Ctrl-D - Ctrl-D macro
+Ctrl-N - backspacing.  This inserts a backspace in your line
+Ctrl-J - downspacing.  This inserts a line feed in your line
+Ctrl-X - Delete entire line.
+Ctrl-W - Back a word.  This deletes the current word you are typing.
+Ctrl-I - Tab.  (or your tab key)
+Ctrl-P - This will allow you to change colors within your text.  To do this,
+         simply hit Ctrl-P followed by a number (0-8).  This will change your
+         current color to that color number. (Go to the default section,
+         option #9 to find which numbers correspond to which colors.)
+         To see the colors, you must have the ANSI option turned on.
+
+|G G-files.
+
+G-files are "General Files", files of general interest.  They may be sub-
+divided into categories.  To read a G-file, just enter the number of the
+file you want to read.
+
+|H Macros.
+
+Macros enable you to enter a sequence of characters with only one keystroke.
+There are two macros, Ctrl-D and Ctrl-F.  If you Ctrl-F macro is set to
+"Hi There", then whenever you hit Ctrl-F, it will act the same as if you had
+typed "Hi There".  Presumably, this macro will be for use when you are writing
+a message, but it may also be activated at, say, the main menu.  If this
+macro were activated at the main menu prompt, un-predictable things might
+happen.  So you should be careful of when you activate your macros.
+
+Macro sub-menu commands:
+L - This lists out what your macros are currently set to.
+Q - This quits back to the main menu.
+M - This allows you to Make your macros.  After hitting "M", you will be asked
+which macro you would like to make, Ctrl-D or Ctrl-F.  Hit "D" or "F" to
+specify which.  Then type the keystrokes you would like in your macro.  They
+may each be up to 80 characters long.  When you are done entering your macro,
+hit ctrl-D or ctrl-F to end, depending on which macro you are making.  You
+will then be asked if this is correct.  If so, say "Y" for yes.
+
+|I Q-scan boards in defaults.
+
+Here you may specify which boards you want quickscanned in a N:ewscan.  In
+the list, a "*" before the board indicates that that board will be
+q-scanned.  If you do not want a board q-scanned that is marked, just type
+the number of the board, and it will be un-marked.  To re-mark the board,
+just enter the board number again.
+
+|J Purge.
+
+This command prints out each of your messages on a certain board, or on all
+boards, and optionally deletes them.  If you wish to delete the last message
+printed, just hit "D" and it will be deleted.  If you do not wish to delete
+it, hit "I" to ignore it.  If you do not wish to continue, hit "Q" to quit.
+
+|K Kill old e-mail.
+
+If you have sent a piece of mail that you decide you actually didn't want to
+send, you may remove it with this command.  Each un-read piece of mail you
+have sent will be gone through, and you may optionally delete them.  For
+each piece of mail, the destination user, title, and how many days it was
+sent will be printed out.  Your options here are:
+
+R - Read the piece of mail.
+D - Delete it.
+N - Go on to the next piece.
+Q - Quit back to the main menu.
+
+|L File mask.
+
+You are being asked to enter a file mask.  Specifying a file mask allows you
+to have printed out only files that fit that mask.  A mask is specified in
+standard PC-DOS notation, such as "*.*" to list all files, or "*.PAS" for
+all files with the .PAS extension, or any other such name, which may include
+"?" or "*".  If you just hit enter, it will default to "*.*", for all the
+files.
+
+
+|M Read mail.
+
+If you have mail waiting that you have not yet read, this is how you read it.
+If you have more than one piece of mail waiting, you will be presented with
+a list of who each piece is from.  This is so that if a certain user sends
+you more than one piece of mail, you do not have to respond to each one
+seperately, but may read them all first, then respond.  After you hit
+<enter> to get past this list, you will read the mail.  Your options
+there are:
+
+D - Delete the piece of mail.
+I - Ignore it.  Keep it in your "mailbox" so you may come back and read it
+    again later.
+R - Re-read the letter.
+A - Auto-reply to the letter.  This deletes the letter, and enables you to
+    send a letter in reply to whoever wrote it.
+
+|N Scan1 prompt.
+
+You are being asked where to start listing the titles of messages.  You are
+given a numeric range of the messages, and you may start listing the titles
+anywhere in that range.  Optionally, you may type "S" to go directly to the
+message read prompt, "Q" to quit back to the main menu, or "N" to list the
+titles of new messages.
+
+|O Off the system.
+
+If you continue, you will be logged off the BBS system.
+
+|P New file date.
+
+You are being asked to enter a date for new files.  The date you enter here
+will be used when you do a new file search ("N").  The files listed in a
+new file search will be any files that were uploaded on or after the date you
+specify.
+
+|Q One-user E-mail.
+
+You are being asked to identify a user to send e-mail to.  You may enter the
+user's name or user number.
+
+|R Remove message.
+
+This allows you to remove a message you have posted.  You will be presented
+with a list of the messages you have posted on the current board, and you
+will be asked which one to delete.  You may enter the number of the message
+you wish to delete, or just hit <enter> if you do not wish to delete one.
+
+|S Scan2 prompt.
+
+This is the message read prompt.  In the prompt line, you are told the range
+of message numbers, and the last message number you have read.
+
+Your options are:
+
+<enter> - This reads the next message.
+# - Entering a number will read that message number.
+Q - This will quit back to the main menu.
+B - If you are in a N:ewscan, this will cause you to stop reading the
+    messages on this board, and go on to the next one.
+T - This will list the titles of the next 10 messages.
+P - This allows you to post a message at the end of this board.
+A - Auto-reply to last message.  This will let you send a piece of mail to
+    the person who wrote the last message you have read.
+
+|T d/l main menu.
+
+BOARD COMMANDS
+--------------
+
+Q - Quit back to the BBS main menu.
+
+O - Log off the BBS.
+
+/O - Quick log off.
+
+C - Chat with the sysop.
+
+Y - Your info.
+
+
+LISTING FILES
+-------------
+
+L - List matching files in this directory.
+
+S - Search for matching files n ALL directories.
+
+F - Find matching file description.
+
+V - Verbose listing of interior files.  Files that have the extension
+.ARC or .LBR actually contain other files in them.  This command will
+list out the files that are containted within them, along with the
+sizes of the files.  You may enter global-filename characters, such as
+"*.ARC" to list out the interior files for all .ARC files.
+
+N - This will list all the new files since your last logon.
+
+A - This option will let you set the directories you wish scanned in a N-
+scan for new files.
+
+P - Set the date for a new file scan.  If you wish to see all new files since
+last week, you may enter a date for last week, and N:ew file searches will
+list out those files uploaded on or after the date you enter.
+
+X - Download YMODEM Batch.  If you marked any files to be downloaded with
+YMODEM Batch protocol, use this option to download them.  You also have the
+option here of deleting files out of the download queue.
+
+
+FILE TRANSFER
+-------------
+
+U - Upload a file to the current directory.
+
+D - Download a file from the current directory.  You may enter global filename
+characters, such as "*.PAS", and you may download all .PAS files.  After
+listing out information on each matching file, you will be asked for the
+protocol you wish to use.  If you decide you do not wish to download it,
+hit "Q" or "0", and you will not.
+
+R - Remove file.  If you have uploaded a file, and you wish to remove it, you
+can do so with this option.
+
+B - Browse files.  This will allow you to "browse" through the files in the
+current directory, so you may pick which you wish to download.
+
+
+|U Upload file.
+
+After entering a filename for upload, the BBS will check to make sure that
+that filename is valid, and isn't already in use.  If it is valid, you will
+be asked to make sure you want to upload it.  If so, you will be asked for a
+one-line description of the file.  The description should give some general
+information about the file, such as what it does and/or what version it is.
+A description may be up to 60 characters long.  After entering the
+description, you will be asked what protocol you would like to use.  Hit
+"?" for a list of valid protocols.  After you tell which protocol, the BBS
+will wait for you to start sending the file.  If you get this far, and then
+decide you don't want to upload it, hit Ctrl-X.
+
+
+|V Vote.
+
+Users may vote on certain topics which the Sysop picks.  When you first enter
+the voting section, you will be given a list of topics you may vote on.
+Enter the number of the topic you wish to vote on.  After specifying a topic,
+you will be given a status of how the votes are so far, and be shown what your
+current vote is, and asked if you wish to change it.  If you do, you will be
+asked to enter which response NUMBER you wish to change it to, then you will
+be given an update of how the responses have changed with your vote.
+
+
+|W Write auto-message.
+
+The auto-message is read by all users when they first log on.  This section
+gives you three options:
+
+R. Read the current auto-message.
+W. Write a new auto-message.  If you do write a new auto-message, it will
+   be three lines long, each 36 characters long.
+A. Reply to cuttent auto-message.  This will send a piece of mail to the
+   author of the current auto-message.
+
+
+|X Download file.
+
+If you chose this option from the download main menu, you may enter the
+filename you wish to download using global filename characters, such as "*"
+and "?".  So if you enter, say, "*.PAS", you will be given the option of
+downloading all matching files in the current directory.
+
+After you specify a file, you will be given information on that file, such
+as the description, who uploaded it, and when it was upload, as long as the
+file length.  The file length is given as the number of blocks for an
+XMODEM transfer, a hyphen, and the number of blocks for a YMODEM transfer.
+The approximate trasfer time is also given, although this is usually an
+over-estimate if you have a good connection.
+
+You will then be asked what transfer protocol to use.  Hit "?" for a list
+of protocols.  If you do not wish to download this file, hit "0", or "Q".
+If you decide to download the file with YMODEM Batch protocol, it will be
+added to a "queue."  When you wish to download the files marked for Batch
+protocol, from the download main menu hit "X".  You will then have the option
+of downloading those files.
+
+
+|Y Find description.
+
+Here you may search the file DESCRIPTIONS to find matching entries.  You
+may, for example, search for "BBS", to find any files which may have to do
+with BBS's.  All descriptions are converted to uppercase first, so you do not
+have to worry about whether to use upper or lower case.
+
+
+|Z Change password.
+
+Using this option, you may change your password.
+
+|[ verbose listing.
+
+If there are .ARC or .LBR files in the current directory, this option will
+let you list out the files that they contain, as well as the file lengths.
+You may use global filename characters, such as "*.ARC" here.
+
+Note: They MUST have the extension .ARC or .LBR in order to use this option.
+
+
+|] Download batch
+
+Here you have 4 main options:
+
+D - Download the files marked for batch transmission.
+
+L - List the files marked for transmission.
+
+R - Remove a file from the queue (by its number).
+
+C - Clear the batch queue.
+
+NOTE: You must have a terminal program which supports batch downloading.
+
